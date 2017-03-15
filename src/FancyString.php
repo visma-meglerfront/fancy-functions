@@ -130,7 +130,7 @@
 			return $str;
 		}
 
-		/*
+		/**
 		 * Remove whitespace from $var.
 		 * This is useful for comparing values which can contain
 		 * whitespaces.

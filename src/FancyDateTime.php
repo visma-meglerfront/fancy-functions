@@ -601,6 +601,13 @@
 			return (new self())->getTimestamp();
 		}
 
+		/**
+		 * Check if the input can be used to create a FancyDateTimeobject.
+		 * 
+		 * @param  string  $input Input
+		 * 
+		 * @return boolean
+		 */
 		public static function isValid(string $input) {
 			try {
 				$ignore = new self($input);
