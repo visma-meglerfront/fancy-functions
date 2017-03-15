@@ -393,6 +393,14 @@
 			return $result;
 		}
 
+		/**
+		 * Check if all of the given elements are in the array.
+		 * 
+		 * @param  array   $haystack The array
+		 * @param  array   $needles  The values that should be in the array
+		 * 
+		 * @return boolean
+		 */
 		public static function hasAll(array $haystack, array $needles): bool {
 			foreach ($needles as $needle) {
 				if (!in_array($needle, $haystack)) {
@@ -403,6 +411,14 @@
 			return true;
 		}
 
+		/**
+		 * Check if any of the given elements are in the array.
+		 * 
+		 * @param  array   $haystack The array
+		 * @param  array   $needles  The elements that might be in the array.
+		 * 
+		 * @return boolean
+		 */
 		public static function hasAny(array $haystack, array $needles): bool {
 			foreach ($needles as $needle) {
 				if (in_array($needle, $haystack)) {
@@ -413,12 +429,28 @@
 			return false;
 		}
 
-		public static function assertType(array $array, string $class) {
+		/**
+		 * Check that all elements of the array are of a certain class.
+		 * 
+		 * @param  array  $array The array
+		 * @param  string $class The class
+		 * 
+		 * @return boolean
+		 */
+		public static function assertType(array $array, string $class): bool {
 			foreach ($array as $object) {
 				FancyFunctions::assertType($object, $class);
 			}
 		}
 
+		/**
+		 * Return all the key-value pairs that are in the first but not the second array.
+		 * 
+		 * @param  array  $first  First array
+		 * @param  array  $second Second array
+		 * 
+		 * @return array
+		 */
 		public static function diffAssocRecursive(array $first, array $second): array {
 			$diff = [];
 
@@ -438,6 +470,15 @@
 			return $diff;
 		}
 
+		/**
+		 * Reduce n-dimensional access to 1-dimensional access.
+		 * 
+		 * @param  array  $arr       the array
+		 * @param  string $index     the index
+		 * @param  string $delimiter delimiter
+		 * 
+		 * @return mixed | null
+		 */
 		public static function colonAccess(array $arr, string $index, string $delimiter = ':') {
 			$accessors = array_filter(explode($delimiter, $index));
 

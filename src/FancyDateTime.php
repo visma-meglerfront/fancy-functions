@@ -113,7 +113,18 @@
 			}
 		}
 
-		private static function tryFormats(array $formats, string $time, $timezone = null) {
+		/**
+		 * Try creating FancyDateTime from a string usung diffrent formats.
+		 * 
+		 * @param  array  $formats  		The formats that will be tried
+		 * @param  string $time     		The time that is used to create the FancyDateTiemobject
+		 * @param  DateTimeZone $timezone 	A timezone
+		 * 
+		 * @return FancyDateTime
+		 * @throws InvalidDateFormatException 	If no formats are given
+		 * @throws Exception 					If no FancyDateTime can be created
+		 */
+		private static function tryFormats(array $formats, string $time, $timezone = null): FancyDateTime {
 			if (!count($formats)) {
 				throw new \InvalidDateFormatException();
 			}
@@ -215,7 +226,12 @@
 			return $this;
 		}
 
-		public function startOfMinute() {
+		/**
+		 * Set time to the start of the minute.
+		 * 
+		 * @return FancyDateTime
+		 */
+		public function startOfMinute(): FancyDateTime {
 			return $this->setTime(
 				$this->format('H'),
 				$this->format('i'),
@@ -223,7 +239,12 @@
 			);
 		}
 
-		public function endOfMinute() {
+		/**
+		 * Set time to the end of the minute.
+		 * 
+		 * @return FancyDateTime
+		 */
+		public function endOfMinute(): FancyDateTime {
 			return $this->setTime(
 				$this->format('H'),
 				$this->format('i'),
@@ -231,7 +252,14 @@
 			);
 		}
 
-		public function startOfHour(bool $cascade = false) {
+		/**
+		 * Set time to the start of the hour.
+		 * 
+		 * @param  bool|boolean $cascade cascade option
+		 * 
+		 * @return FancyDateTime
+		 */
+		public function startOfHour(bool $cascade = false): FancyDateTime {
 			return ($cascade ? $this->startOfMinute() : $this)->setTime(
 				$this->format('H'),
 				0,
@@ -239,7 +267,14 @@
 			);
 		}
 
-		public function endOfHour(bool $cascade = false) {
+		/**
+		 * Set time to the end of the hour.
+		 * 
+		 * @param  bool|boolean $cascade cascade option
+		 * 
+		 * @return FancyDateTime
+		 */
+		public function endOfHour(bool $cascade = false): FancyDateTime {
 			return ($cascade ? $this->endOfMinute() : $this)->setTime(
 				$this->format('H'),
 				59,
@@ -266,6 +301,13 @@
 			return ($cascade ? $this->endOfHour() : $this)->setTime(23, 59, 59);
 		}
 
+		/**
+		 * Set the date to the last day of the week.
+		 * 
+		 * @param  bool|boolean $cascade cascade option
+		 * 
+		 * @return FancyDateTime
+		 */
 		public function startOfWeek(bool $cascade = false): FancyDateTime {
 			return ($cascade ? $this->startOfDay(true) : $this)->setISODate(
 				$this->format('Y'),
@@ -274,6 +316,13 @@
 			);
 		}
 
+		/**
+		 * Set the date to the last day of the week.
+		 * 
+		 * @param  bool|boolean $cascade cascade option
+		 * 
+		 * @return FancyDateTime
+		 */
 		public function endOfWeek(bool $cascade = false): FancyDateTime {
 			return ($cascade ? $this->endOfDay(true) : $this)->setISODate(
 				$this->format('Y'),
@@ -282,14 +331,35 @@
 			);
 		}
 
+		/**
+		 * Set the date to the first day of the month.
+		 * 
+		 * @param  bool|boolean $cascade cascade option
+		 * 
+		 * @return FancyDateTime
+		 */
 		public function startOfMonth(bool $cascade = false): FancyDateTime {
 			return ($cascade ? $this->startOfDay(true) : $this)->modify('first day of this month');
 		}
 
+		/**
+		 * Set the date to the last day of the month.
+		 * 
+		 * @param  bool|boolean $cascade cascade option
+		 * 
+		 * @return FancyDateTime                
+		 */
 		public function endOfMonth(bool $cascade = false): FancyDateTime {
 			return ($cascade ? $this->endOfDay(true) : $this)->modify('last day of this month');
 		}
 
+		/**
+		 * Set date to the first day of the year.
+		 * 
+		 * @param  bool|boolean $cascade cascade option
+		 * 
+		 * @return FancyDateTime
+		 */
 		public function startOfYear(bool $cascade = false): FancyDateTime {
 			return ($cascade ? $this->startOfMonth(true) : $this)->setDate(
 				$this->format('Y'),
@@ -298,6 +368,13 @@
 			);
 		}
 
+		/**
+		 * Set the date to the last day of the year.
+		 * 
+		 * @param  bool|boolean $cascade cascade option
+		 * 
+		 * @return FancyDateTime                
+		 */
 		public function endOfYear(bool $cascade = false): FancyDateTime {
 			return ($cascade ? $this->endOfMonth(true) : $this)->setDate(
 				$this->format('Y'),
@@ -306,10 +383,20 @@
 			);
 		}
 
+		/**
+		 * Set the date to yesterday.
+		 * 
+		 * @return FancyDateTime
+		 */
 		public function yesterday(): FancyDateTime {
 			return $this->modify('-1 day');
 		}
 
+		/**
+		 * Set the date to tomorrow.
+		 * 
+		 * @return FancyDateTime
+		 */
 		public function tomorrow(): FancyDateTime {
 			return $this->modify('+1 day');
 		}
@@ -340,13 +427,25 @@
 			return false;
 		}
 
-		// TODO frame ("firstAndLastPossibleDate")
-
-		public function equalsDay(\DateTime $dt) {
+		/**
+		 * Check if the given DateTimeobject has the same day.
+		 * 
+		 * @param  \DateTime $dt DateTimeobject
+		 * 
+		 * @return bolean
+		 */
+		public function equalsDay(\DateTime $dt): bool {
 			return $dt->format('Y-m-d') == $this->format('Y-m-d');
 		}
 
-		public function equalsSecond(\DateTime $dt) {
+		/**
+		 * Check if th given DateTimeobject equals this to the second.
+		 * 
+		 * @param  \DateTime $dt DateTimeobject
+		 * 
+		 * @return boolean        
+		 */
+		public function equalsSecond(\DateTime $dt): bool {
 			return $dt->getTimestamp() == $this->getTimestamp();
 		}
 		

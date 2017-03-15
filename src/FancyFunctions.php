@@ -310,6 +310,14 @@ namespace Adepto\Fancy;
 			return !empty($s['HTTP_X_REQUESTED_WITH']) && strtolower($s['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 		}
 
+		/**
+		 * Check if the object is instance of a class.
+		 * 
+		 * @param  mixed  $object The object
+		 * @param  string $class  The class
+		 *
+		 * @throws Exception If the object is not instance of the class
+		 */
 		public static function assertType($object, string $class) {
 			if (!($object instanceof $class)) {
 				throw new \Exception('Expected class ' . $class . ', found ' . get_class($object));

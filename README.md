@@ -227,6 +227,11 @@ If $format is an array all those formats will be tried out until a match
 is found.
 
 ```php
+static tryFormats(array $formats, string $time, $timezone = null): FancyDateTime
+```
+Try creating FancyDateTime from a string usung diffrent formats.
+
+```php
 static timestampToDate(int $ts, $format = 'd.m.Y'): string
 ```
 Convert a timestamp to a given date format.
@@ -250,17 +255,17 @@ Round time to midnight.
 ```php
 startOfMinute(): FancyDateTime
 ```
-Set seconds to 0.
+Set time to the start of the minute.
 
 ```php
 endOfMinute(): FancyDateTime
 ```
-Set seconds to 59.
+Set time to the end of the minute.
 
 ```php
 startOfHour(bool $cascade = false): FancyDateTime
 ```
-Set minutes and seconds to 0.
+Set time to the start of the hour.
 
 ```php
 endOfHour(bool $cascade = false): FancyDateTime
@@ -462,6 +467,11 @@ Check if a value is set by reference.
 static isAJAXrequest(array $s = null): bool
 ```
 Check if a request is an ajax request.
+
+```php
+static assertType($object, string $class)
+```
+Check if the object is instance of a class. Throws an exception if this is not the case, otherwise does nothing.
 
 ### Abstract: FancyMath
 
