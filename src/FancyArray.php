@@ -378,7 +378,7 @@
 		 *
 		 * @param  array                $arr Array to remove duplicates from
 		 * @param  callable             $cb  Callback receives one argument: the current value being investigated
-		 * @param  bool|boolean = false $map If true, results are defined by the callback. If false, original values are being used.
+		 * @param  bool = false $map If true, results are defined by the callback. If false, original values are being used.
 		 *
 		 * @return array
 		 */

@@ -255,7 +255,7 @@
 		/**
 		 * Set time to the start of the hour.
 		 * 
-		 * @param  bool|boolean $cascade cascade option
+		 * @param  bool $cascade cascade option
 		 * 
 		 * @return FancyDateTime
 		 */
@@ -270,7 +270,7 @@
 		/**
 		 * Set time to the end of the hour.
 		 * 
-		 * @param  bool|boolean $cascade cascade option
+		 * @param  bool $cascade cascade option
 		 * 
 		 * @return FancyDateTime
 		 */
@@ -304,7 +304,7 @@
 		/**
 		 * Set the date to the last day of the week.
 		 * 
-		 * @param  bool|boolean $cascade cascade option
+		 * @param  bool $cascade cascade option
 		 * 
 		 * @return FancyDateTime
 		 */
@@ -319,7 +319,7 @@
 		/**
 		 * Set the date to the last day of the week.
 		 * 
-		 * @param  bool|boolean $cascade cascade option
+		 * @param  bool $cascade cascade option
 		 * 
 		 * @return FancyDateTime
 		 */
@@ -334,7 +334,7 @@
 		/**
 		 * Set the date to the first day of the month.
 		 * 
-		 * @param  bool|boolean $cascade cascade option
+		 * @param  bool $cascade cascade option
 		 * 
 		 * @return FancyDateTime
 		 */
@@ -345,7 +345,7 @@
 		/**
 		 * Set the date to the last day of the month.
 		 * 
-		 * @param  bool|boolean $cascade cascade option
+		 * @param  bool $cascade cascade option
 		 * 
 		 * @return FancyDateTime                
 		 */
@@ -356,7 +356,7 @@
 		/**
 		 * Set date to the first day of the year.
 		 * 
-		 * @param  bool|boolean $cascade cascade option
+		 * @param  bool $cascade cascade option
 		 * 
 		 * @return FancyDateTime
 		 */
@@ -371,7 +371,7 @@
 		/**
 		 * Set the date to the last day of the year.
 		 * 
-		 * @param  bool|boolean $cascade cascade option
+		 * @param  bool $cascade cascade option
 		 * 
 		 * @return FancyDateTime                
 		 */
