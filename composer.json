@@ -1,0 +1,30 @@
+{
+    "name": "adeptoas/fancy",
+    "description": "Fancy Functions Collection",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "FeistyBall",
+            "email": "cg@adepto.as"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "danielstjules/stringy": "^2.4",
+        "php": ">=7.0.0",
+        "ext-mbstring": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Adepto\\Fancy\\": "src"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
+    "scripts": {
+        "test": "phpunit -c phpunit.xml"
+    }
+}
