@@ -10,7 +10,7 @@ Add this to `composer.json`:
 "repositories": [
     {
         "type": "vcs",
-        "url": "https://github.com/adeptoas/fancy"
+        "url": "https://github.com/adeptoas/fancy-functions"
     }
 ],
 
