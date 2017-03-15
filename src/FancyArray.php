@@ -477,7 +477,7 @@
 		 * @param  string $index     the index
 		 * @param  string $delimiter delimiter
 		 * 
-		 * @return mixed | null
+		 * @return mixed
 		 */
 		public static function colonAccess(array $arr, string $index, string $delimiter = ':') {
 			$accessors = array_filter(explode($delimiter, $index));
