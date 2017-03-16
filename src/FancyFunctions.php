@@ -78,7 +78,7 @@ namespace Adepto\Fancy;
 				return 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($file));
 			}
 
-			$img = new Imagick();
+			$img = new \Imagick();
 
 			$img->readImageBlob(file_get_contents($file));
 			$img->setImageFormat("png24");
