@@ -489,7 +489,7 @@
 				$accessor = array_shift($accessors);
 				$remaining = implode(':', $accessors);
 
-				return self::colonAccess($arr[$accessor], $remaining);
+				return self::colonAccess($arr[$accessor] ?? [], $remaining);
 			} else {
 				return null;
 			}
