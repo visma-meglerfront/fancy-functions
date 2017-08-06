@@ -487,9 +487,9 @@
 				return $arr[$accessor];
 			} else if (count($accessors) > 1) {
 				$accessor = array_shift($accessors);
-				$remaining = implode(':', $accessors);
+				$remaining = implode($delimiter, $accessors);
 
-				return self::colonAccess($arr[$accessor] ?? [], $remaining);
+				return self::colonAccess($arr[$accessor] ?? [], $remaining, $delimiter);
 			} else {
 				return null;
 			}
