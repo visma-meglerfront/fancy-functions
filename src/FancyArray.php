@@ -480,7 +480,9 @@
 		 * @return mixed
 		 */
 		public static function colonAccess(array $arr, string $index, string $delimiter = ':') {
-			$accessors = array_filter(explode($delimiter, $index));
+			$accessors = array_filter(explode($delimiter, $index), function ($access) {
+				return strlen($access) > 0;
+			});
 
 			if (count($accessors) == 1) {
 				$accessor = (string) $accessors[0];

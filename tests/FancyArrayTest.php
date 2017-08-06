@@ -292,6 +292,13 @@
 			$this->assertFalse(FancyArray::hasAny(['one', 'three'], []));
 		}
 
+		public function testColonAccess() {
+			$this->assertEquals(FancyArray::colonAccess(['one'	=>	['some', 'value']], 'one:0'), 'some');
+			$this->assertEquals(FancyArray::colonAccess(['one'	=>	['some', 'value']], 'one!__!0', '!__!'), 'some');
+
+			$this->assertEquals(FancyArray::colonAccess(['one'	=>	['some', ['nested', 'value']]], 'one::1::0', '::'), 'nested');
+		}
+
 		public function testFlipSequential() {
 			$this->assertEquals(FancyArray::flipSequential(['one', 'two']), ['one'	=>	0, 'two'	=>	0]);
 		}
