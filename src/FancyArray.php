@@ -141,7 +141,7 @@
 		 * any other function can modify it!
 		 *
 		 * @param  array  $arr Array to convert
-		 * @return stdClass
+		 * @return \stdClass
 		 */
 		public static function arrayToObject(array $arr): \stdClass {
 			$obj = new \stdClass();
@@ -161,7 +161,7 @@
 		 * Convert an object to an array. This deep-copies everything
 		 * from the object to the array.
 		 *
-		 * @param  stdClass  $obj Object to convert
+		 * @param  \stdClass  $obj Object to convert
 		 * @return array
 		 */
 		public static function objectToArray(\stdClass $obj): array {
@@ -193,9 +193,9 @@
 		 *     -> remove: 1 (because that elements doesn't appear anywhere else)
 		 *     -> #changes: 3
 		 *
-		 * @throws InvalidArgumentException if less than two arrays were passed
+		 * @param array $arrays
 		 *
-		 * @return array
+		 * @return array if less than two arrays were passed
 		 */
 		public static function difference(...$arrays): array {
 			if (count($arrays) < 2) {
@@ -290,10 +290,7 @@
 		public static function moveElement(array $arr, $old, $new): array {
 			if (is_int($old)) {
 				$tmp = array_splice($arr, $old, 1);
-
 				array_splice($arr, $new, 0, $tmp);
-
-				$output = $arr;
 			} else if (is_string($old)) {
 				$indexToMove = array_search($old, array_keys($arr));
 				$itemToMove = $arr[$old];
@@ -313,7 +310,7 @@
 				}
 			}
 
-			return $output;
+			return $arr;
 		}
 
 		/**
@@ -434,10 +431,8 @@
 		 * 
 		 * @param  array  $array The array
 		 * @param  string $class The class
-		 * 
-		 * @return boolean
 		 */
-		public static function assertType(array $array, string $class): bool {
+		public static function assertType(array $array, string $class) {
 			foreach ($array as $object) {
 				FancyFunctions::assertType($object, $class);
 			}
@@ -521,7 +516,7 @@
 		 * @return array
 		 */
 		public static function flipSequential(array $arr, $default = 0): array {
-			return array_map(function($elem) use($default) {
+			return array_map(function() use($default) {
 				return $default;
 			}, array_flip($arr));
 		}

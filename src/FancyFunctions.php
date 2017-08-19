@@ -316,7 +316,7 @@ namespace Adepto\Fancy;
 		 * @param  mixed  $object The object
 		 * @param  string $class  The class
 		 *
-		 * @throws Exception If the object is not instance of the class
+		 * @throws \Exception If the object is not instance of the class
 		 */
 		public static function assertType($object, string $class) {
 			if (!($object instanceof $class)) {
