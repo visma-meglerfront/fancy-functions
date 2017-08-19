@@ -493,6 +493,64 @@
 		}
 
 		/**
+		 * Same idea as {@see colonAccess}, but writes instead of reading.
+		 *
+		 * @param array  $arr       The array to write to
+		 * @param string $key       The (joined) key under which to set the new element
+		 * @param $value mixed      The value to set
+		 * @param string $delimiter The delimiter for splitting multi-dimensional keys. Defaults to ':'
+		 *
+		 * @return array
+		 */
+		public static function colonInject(array $arr, string $key, $value, string $delimiter = ':'): array {
+			$accessors = array_filter(explode($delimiter, $key), function ($val) {
+				return strlen($val) > 0;
+			});
+
+			if (count($accessors) == 1) {
+				$accessor = (string) $accessors[0];
+				$arr[$accessor] = $value;
+			} else if (count($accessors) > 1) {
+				$accessor = array_shift($accessors);
+				$remaining = implode($delimiter, $accessors);
+
+				$arr[$accessor] = self::colonInject($arr[$accessor] ?? [], $remaining, $value, $delimiter);
+			}
+
+			return $arr;
+		}
+
+		/**
+		 * L-inear A-rray D-ownward A-ccess
+		 * Takes a linear input array, i.e. a sequential list that has one-dimensional associative arrays as elements,
+		 * and extracts all given keys from every one of these elements.
+		 * The groups together a new result nested by the relevant key's values in each element
+		 *
+		 * @param array $arr  The linear array to regroup
+		 * @param array $keys The keys to regroup after
+		 *
+		 * @return array
+		 */
+		public static function ladaGroup(array $arr, array $keys): array {
+			$delimiter = '%%LADA%%';
+			$lada = [];
+
+			foreach ($arr as $item) {
+				$key = implode($delimiter, array_map(function (string $key) use ($item) {
+					return $item[$key];
+				}, $keys));
+
+				foreach ($keys as $subKey) {
+					unset($item[$subKey]);
+				}
+
+				$lada = self::colonInject($lada, $key, $item, $delimiter);
+			}
+
+			return $lada;
+		}
+
+		/**
 		 * Convert an array to a CSV string
 		 * First array are the headings, subsequent arrays the contents
 		 *
