@@ -302,4 +302,21 @@
 		public function testFlipSequential() {
 			$this->assertEquals(FancyArray::flipSequential(['one', 'two']), ['one'	=>	0, 'two'	=>	0]);
 		}
+
+		public function testDepth() {
+			$this->assertEquals(FancyArray::depth([]), 1);
+			$this->assertEquals(FancyArray::depth([[]]), 2);
+			$this->assertEquals(FancyArray::depth([[[[[]]]]]), 5);
+
+			$this->assertEquals(FancyArray::depth([
+				'someKey'	=>	[
+					'someFancyKey'	=>	[
+						'someReallyFancyValue'
+					]
+				],
+				'otherKey'	=>	[
+					'someNotSoFancyValue'
+				]
+			]), 3);
+		}
 	}

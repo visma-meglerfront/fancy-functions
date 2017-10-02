@@ -551,6 +551,20 @@
 		}
 
 		/**
+		 * Count how deeply nested an array is
+		 *
+		 * @param  array  $arr
+		 *
+		 * @return  int
+		 */
+		public static function depth(array $arr): int {
+			// use ternary question because max() complains about empty arrays (duh…)
+			return 1 + ($arr ? max(array_map(function ($val) {
+				return is_array($val) ? self::depth($val) : 0;
+			}, $arr)) : 0);
+		}
+
+		/**
 		 * Convert an array to a CSV string
 		 * First array are the headings, subsequent arrays the contents
 		 *
