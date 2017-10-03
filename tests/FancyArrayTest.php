@@ -319,4 +319,25 @@
 				]
 			]), 3);
 		}
+
+		public function testDeepCount() {
+			$this->assertEquals(FancyArray::deepCount([]), 0);
+			$this->assertEquals(FancyArray::deepCount(['some', 'element']), 2);
+
+			$this->assertEquals(FancyArray::deepCount(['some', ['nested', 'element']]), 3);
+
+			$arr = [
+				'key'		=>	'value',
+				'nested'	=>	[
+					'array',
+					'full'	=>	'of',
+					[
+						'surprises',
+						':)'
+					]
+				]
+			];
+
+			$this->assertEquals(FancyArray::deepCount($arr), FancyArray::flatCount($arr));
+		}
 	}

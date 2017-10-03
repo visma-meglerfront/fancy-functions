@@ -565,6 +565,31 @@
 		}
 
 		/**
+		 * Count all elements within an array, including potential sub-arrays
+		 *
+		 * @param  array  $arr  The array to count
+		 *
+		 * @return int
+		 */
+		public static function deepCount(array $arr): int {
+			return array_sum(array_map(function ($val) {
+				return is_array($val) ? self::deepCount($val) : 1;
+			}, $arr));
+		}
+
+		/**
+		 * Count the flattened array.
+		 * This is just a convenience alias for count(flatten($arr))
+		 *
+		 * @param  array  $arr  The array to count
+		 *
+		 * @return  int
+		 */
+		public static function flatCount(array $arr): int {
+			return count(self::flattenAssoc($arr));
+		}
+
+		/**
 		 * Convert an array to a CSV string
 		 * First array are the headings, subsequent arrays the contents
 		 *
