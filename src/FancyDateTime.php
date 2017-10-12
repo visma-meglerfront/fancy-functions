@@ -1,6 +1,6 @@
 <?php
 	namespace Adepto\Fancy;
-	
+
 	/**
 	 * FancyDateTime
 	 * Extended version of the built-in DateTime class.
@@ -76,7 +76,7 @@
 		/**
 		 * Copy the value of another DateTime
 		 *
-		 * @param DateTimeInterface $other The FancyDateTime to clone
+		 * @param \DateTimeInterface $other The FancyDateTime to clone
 		 * @return FancyDateTime The cloned object
 		 */
 		public static function fromDateTime(\DateTimeInterface $other) {
@@ -93,10 +93,10 @@
 		 *
 		 * @param string|array $format   Format(s) to try
 		 * @param string       $time     The time thing to parse
-		 * @param DateTimeZone $timezone A timezone
+		 * @param \DateTimeZone $timezone A timezone
 		 *
 		 * @return bool|FancyDateTime
-		 * @throws InvalidDateFormatException If $format is an array of formats but $time didn't match one
+		 * @throws \Exception If $format is an array of formats but $time didn't match one
 		 */
 		public static function createFromFormat($format, $time, $timezone = null) {
 			if (is_array($format)) {
@@ -106,7 +106,7 @@
 				$dt = \DateTime::createFromFormat($format, $time, $timezone);
 
 				if ($dt instanceof \DateTime) {
-					return self::fromTimestamp($dt->getTimestamp());
+					return self::fromDateTime($dt);
 				}
 
 				return $dt;
@@ -118,15 +118,14 @@
 		 * 
 		 * @param  array  $formats  		The formats that will be tried
 		 * @param  string $time     		The time that is used to create the FancyDateTiemobject
-		 * @param  DateTimeZone $timezone 	A timezone
+		 * @param  \DateTimeZone $timezone 	A timezone
 		 * 
 		 * @return FancyDateTime
-		 * @throws InvalidDateFormatException 	If no formats are given
-		 * @throws Exception 					If no FancyDateTime can be created
+		 * @throws \Exception 					If no FancyDateTime can be created
 		 */
-		private static function tryFormats(array $formats, string $time, $timezone = null): FancyDateTime {
+		private static function tryFormats(array $formats, string $time, \DateTimeZone $timezone = null): FancyDateTime {
 			if (!count($formats)) {
-				throw new \InvalidDateFormatException();
+				throw new \Exception();
 			}
 
 			$format = array_pop($formats);
@@ -135,11 +134,11 @@
 				$dt = self::createFromFormat($format, $time, $timezone);
 
 				if (!$dt) {
-					throw new Exception();
+					throw new \Exception();
 				}
 
 				return $dt;
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				return self::tryFormats($formats, $time, $timezone);
 			}
 		}
@@ -259,7 +258,7 @@
 		 * 
 		 * @return FancyDateTime
 		 */
-		public function startOfHour(bool $cascade = false): FancyDateTime {
+		public function startOfHour(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->startOfMinute() : $this)->setTime(
 				$this->format('H'),
 				0,
@@ -274,7 +273,7 @@
 		 * 
 		 * @return FancyDateTime
 		 */
-		public function endOfHour(bool $cascade = false): FancyDateTime {
+		public function endOfHour(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->endOfMinute() : $this)->setTime(
 				$this->format('H'),
 				59,
@@ -288,7 +287,7 @@
 		 *
 		 * @return FancyDateTime
 		 */
-		public function startOfDay(bool $cascade = false): FancyDateTime {
+		public function startOfDay(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->startOfHour() : $this)->setTime(0, 0, 0);
 		}
 
@@ -297,7 +296,7 @@
 		 *
 		 * @return FancyDateTime
 		 */
-		public function endOfDay(bool $cascade = false): FancyDateTime {
+		public function endOfDay(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->endOfHour() : $this)->setTime(23, 59, 59);
 		}
 
@@ -308,7 +307,7 @@
 		 * 
 		 * @return FancyDateTime
 		 */
-		public function startOfWeek(bool $cascade = false): FancyDateTime {
+		public function startOfWeek(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->startOfDay(true) : $this)->setISODate(
 				$this->format('Y'),
 				$this->format('W'),
@@ -323,7 +322,7 @@
 		 * 
 		 * @return FancyDateTime
 		 */
-		public function endOfWeek(bool $cascade = false): FancyDateTime {
+		public function endOfWeek(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->endOfDay(true) : $this)->setISODate(
 				$this->format('Y'),
 				(int) $this->format('W') + 1,
@@ -338,7 +337,7 @@
 		 * 
 		 * @return FancyDateTime
 		 */
-		public function startOfMonth(bool $cascade = false): FancyDateTime {
+		public function startOfMonth(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->startOfDay(true) : $this)->modify('first day of this month');
 		}
 
@@ -349,7 +348,7 @@
 		 * 
 		 * @return FancyDateTime                
 		 */
-		public function endOfMonth(bool $cascade = false): FancyDateTime {
+		public function endOfMonth(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->endOfDay(true) : $this)->modify('last day of this month');
 		}
 
@@ -360,7 +359,7 @@
 		 * 
 		 * @return FancyDateTime
 		 */
-		public function startOfYear(bool $cascade = false): FancyDateTime {
+		public function startOfYear(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->startOfMonth(true) : $this)->setDate(
 				$this->format('Y'),
 				1,
@@ -375,7 +374,7 @@
 		 * 
 		 * @return FancyDateTime                
 		 */
-		public function endOfYear(bool $cascade = false): FancyDateTime {
+		public function endOfYear(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->endOfMonth(true) : $this)->setDate(
 				$this->format('Y'),
 				12,
@@ -402,14 +401,23 @@
 		}
 
 		/**
+		 * Convenience method for fluid in-line cloning
+		 *
+		 * @return FancyDateTime exact copy of $this
+		 */
+		public function copy(): FancyDateTime {
+			return clone $this;
+		}
+
+		/**
 		 * Checks whether this date is divisible by a certain factor of minutes.
 		 *
-		 * @param  DateTime $end     End to check, i.e. to check whether this is true in the next 10 minutes pass a date in 10 minutes
+		 * @param  \DateTimeInterface $end     End to check, i.e. to check whether this is true in the next 10 minutes pass a date in 10 minutes
 		 * @param  int      $minutes Factor to check for
 		 *
 		 * @return boolean
 		 */
-		public function isDivisibleByMinutes(\DateTime $end, $minutes): bool {
+		public function isDivisibleByMinutes(\DateTimeInterface $end, $minutes): bool {
 			$midnight = self::todayAtMidnight();
 			
 			$interval = \DateInterval::createFromDateString('1 min');
@@ -428,13 +436,13 @@
 		}
 
 		/**
-		 * Check if the given DateTimeobject has the same day.
-		 * 
-		 * @param  \DateTime $dt DateTimeobject
-		 * 
-		 * @return bolean
+		 * Check if the given DateTime object has the same day.
+		 *
+		 * @param  \DateTimeInterface $dt  DateTime object
+		 *
+		 * @return bool
 		 */
-		public function equalsDay(\DateTime $dt): bool {
+		public function equalsDay(\DateTimeInterface $dt): bool {
 			return $dt->format('Y-m-d') == $this->format('Y-m-d');
 		}
 
@@ -521,15 +529,15 @@
 		 * @return string
 		 */
 		public static function timeDiffToString(int $diff): string {
-			$now = new \DateTime();
+			$now = new self();
 			
-			$then = new \DateTime();
-			$then->add(new \DateInterval('PT' . $diff .'S'));
+			$then = new self();
+			$then->modify('+' . $diff . ' seconds');
 			
 			$diff = $now->diff($then);
 			$str = [];
 			
-			$props = [
+			static $props = [
 				'y'	=>	'years',
 				'm' =>	'months',
 				'd' =>	'days',
@@ -560,7 +568,7 @@
 		 * @param  String $birthdate  Birthdate in the specified $format
 		 * @param  String $returnType Return Type, either 'string', 'object' or 'integer'
 		 *
-		 * @throws InvalidArgumentException when $birthdate cannot be parsed by FancyDateTime
+		 * @throws \InvalidArgumentException when $birthdate cannot be parsed by FancyDateTime
 		 *
 		 * @return mixed
 		 */
@@ -602,7 +610,7 @@
 		}
 
 		/**
-		 * Check if the input can be used to create a FancyDateTimeobject.
+		 * Check if the input can be used to create a FancyDateTime object.
 		 * 
 		 * @param  string  $input Input
 		 * 
@@ -612,24 +620,24 @@
 			try {
 				$ignore = new self($input);
 				return $ignore instanceof FancyDateTime;
-			} catch (Exception $ex) {
+			} catch (\Exception $ex) {
 				return false;
 			}
 		}
 
 		/**
-		 * Get all dates between startdate and enddate in an array.
+		 * Get all dates between startDate and endDate in an array.
 		 * 
-		 * @param  DateTimeInterface $startdate Start Date
-		 * @param  DateTimeInterface $enddate   End Date
+		 * @param  \DateTimeInterface $startDate Start Date
+		 * @param  \DateTimeInterface $endDate   End Date
 		 * 
 		 * @return array
 		 */
-		public static function interval(\DateTimeInterface $startdate, \DateTimeInterface $enddate): array {
+		public static function interval(\DateTimeInterface $startDate, \DateTimeInterface $endDate): array {
 			$interval = new \DateInterval('P1D');
-			$clonedEnd = clone $enddate;
+			$clonedEnd = clone $endDate;
 
-			$range = new \DatePeriod($startdate, $interval, $clonedEnd->modify('+1 day'));
+			$range = new \DatePeriod($startDate, $interval, $clonedEnd->modify('+1 day'));
 
 			$arr = [];
 
