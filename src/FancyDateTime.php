@@ -6,11 +6,11 @@
 	 * Extended version of the built-in DateTime class.
 	 *
 	 * @author bluefirex, suushie_maniac, FeistyBall
-	 * @version 1.5
+	 * @version 1.6
 	 * @package as.adepto.fancy
 	 */
 	class FancyDateTime extends \DateTime {
-		const FORMAT_MYSQL = 'Y-m-d H:i';
+		const FORMAT_MYSQL = 'Y-m-d H:i:s';
 
 		const WEEKDAY_MONDAY = 1;
 		const WEEKDAY_TUESDAY = 2;
