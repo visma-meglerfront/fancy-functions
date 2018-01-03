@@ -44,7 +44,7 @@
 		public function testToMySQL() {
 			$extdt = new FancyDateTime();
 
-			$this->assertEquals(date('Y-m-d H:i'), $extdt->toMySQL());
+			$this->assertEquals(date('Y-m-d H:i:s'), $extdt->toMySQL());
 		}
 
 		public function testWeekend() {
