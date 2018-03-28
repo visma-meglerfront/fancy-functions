@@ -1,5 +1,5 @@
 <?php
-namespace Adepto\Fancy;
+	namespace Adepto\Fancy;
 
 	/**
 	 * FancyFunctions
@@ -181,11 +181,7 @@ namespace Adepto\Fancy;
 		 * @return boolean
 		 */
 		public static function anyEmpty(...$vars): bool {
-			foreach ($vars as $var) {
-				if (empty($var)) return true;
-			}
-
-			return false;
+			return FancyArray::any($vars, FancyClosure::fnEmpty());
 		}
 
 		/**
@@ -194,13 +190,7 @@ namespace Adepto\Fancy;
 		 * @return boolean
 		 */
 		public static function allEmpty(...$vars): bool {
-			$results = [];
-
-			foreach ($vars as $var) {
-				$results[] = (int) empty($var);
-			}
-
-			return !in_array(0, $results);
+			return FancyArray::all($vars, FancyClosure::fnEmpty());
 		}
 
 		/**
@@ -219,40 +209,17 @@ namespace Adepto\Fancy;
 		}
 
 		/**
-		 * Curry a function from left.
-		 * Currying means to bind some arguments to a function and return a new function
-		 * with the passed arguments bound.
-		 *
-		 * i.e.: You have a function that takes two integers and adds them up. If you now want to
-		 *       auto-add "2" to all items in an array of numbers, you can use curry to pre-bind
-		 *       "2" to your function and then just pass it to array_map:
-		 *
-		 *       $addedTwo = array_map(curry('add2', 2), $arrayOfNumbers);
-		 *
-		 * @param  callable $fn   Original closure/callable to curry
-		 * @param           $args Arguments to bind from left
-		 *
-		 * @return callable
+		 * @deprecated in favor of {@see FancyClosure::curry}
 		 */
 		public static function curry(callable $fn, ...$args) {
-			return function(...$additionalArgs) use($fn, $args) {
-				return $fn(...$args, ...$additionalArgs);
-			};
+			return FancyClosure::curry($fn, ...$args);
 		}
 
 		/**
-		 * Curry a function from right.
-		 * For documentation on how currying works and what it does, {@see FancyFunctions::curry}.
-		 *
-		 * @param  callable $fn   Original closure/callable to curry
-		 * @param           $args Arguments to bind from right
-		 *
-		 * @return callable
+		 * @deprecated in favor of {@see FancyClosure::curryRight}
 		 */
 		public static function curryRight(callable $fn, ...$args) {
-			return function(...$additionalArgs) use($fn, $args) {
-				return $fn(...$additionalArgs, ...$args);
-			};
+			return FancyClosure::curryRight($fn, ...$args);
 		}
 
 		/**
@@ -293,7 +260,6 @@ namespace Adepto\Fancy;
 		public static function issetByReference(&$varVal): bool {
 			return isset($varVal);
 		}
-
 
 		/**
 		 * Check if a request is an ajax request.
