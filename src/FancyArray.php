@@ -551,6 +551,27 @@
 		}
 
 		/**
+		 * See Python
+		 *
+		 * @param  array[]  ...$arr  The arrays to zip
+		 * @return array The zipped array
+		 */
+		public static function zip(array ...$arr) {
+			return array_map([static::class, 'splat'], ...$arr);
+		}
+
+		/**
+		 * Pack the supplied variadic arguments into one single array
+		 *
+		 * @param  array  ...$args  Different arguments to pack
+		 *
+		 * @return array The packed array
+		 */
+		public static function splat(...$args) {
+			return $args;
+		}
+
+		/**
 		 * Count how deeply nested an array is
 		 *
 		 * @param  array  $arr
@@ -616,5 +637,56 @@
 			return array_map(function() use($default) {
 				return $default;
 			}, array_flip($arr));
+		}
+
+		/**
+		 * Check if all elements of an array fulfill a given predicate closure
+		 *
+		 * @param array $arr
+		 * @param callable $fn
+		 *
+		 * @return bool
+		 */
+		public static function all(array $arr, callable $fn) {
+			foreach ($arr as $item) {
+				if (!$fn($item)) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		/**
+		 * Check if any element in the array happens to fulfill a given predicate closure
+		 *
+		 * @param array $arr
+		 * @param callable $fn
+		 *
+		 * @return bool
+		 */
+		public static function any(array $arr, callable $fn) {
+			foreach ($arr as $item) {
+				if ($fn($item)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * Partition any array into a sublist of entries that fulfill the predicate, and a sublist of entries that don't
+		 *
+		 * @param  array     $arr  The array to partition
+		 * @param  callable  $fn   The predicate function to partition with
+		 *
+		 * @return array The partitioned array, where the first sub-array yields all "true" results, and the second array all "false" results
+		 */
+		public static function partition(array $arr, callable $fn) {
+			return [
+				array_filter($arr, $fn),
+				array_filter($arr, FancyClosure::negate($fn))
+			];
 		}
 	}
