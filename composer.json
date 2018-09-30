@@ -25,6 +25,6 @@
         "phpunit/phpunit": "^6.0"
     },
     "scripts": {
-        "test": "phpunit -c phpunit.xml"
+        "test": "php vendor/bin/phpunit -c phpunit.xml --colors=always"
     }
 }
