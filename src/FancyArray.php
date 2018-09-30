@@ -689,4 +689,45 @@
 				array_filter($arr, FancyClosure::negate($fn))
 			];
 		}
+
+		/**
+		 * Check if an array matches specific strings or other values, supports wildcards.
+		 * e.g.: your array is [ 'hello' => 'there' ] and your specification requires [ 'hello' => 'th*' ], it would match
+		 * Supports nesting of up to 255 arrays (PHP limitation).
+		 *
+		 * @param  array        $arr        Array to check
+		 * @param  array        $shouldHave Specification, see description
+		 * @param  bool|boolean $throw      if true, exceptions are thrown
+		 *
+		 * @throws \OutOfBoundsException     if key could not be found and $throw is true
+		 * @throws \TypeError                if value types don't match and $throw is true
+		 * @throws \UnexpectedValueException if value has same type but is still not the same and $throw is true
+		 *
+		 * @return bool
+		 */
+		public static function matches(array $arr, array $shouldHave, bool $throw = true): bool {
+			$matches = true;
+
+			try {
+				foreach ($shouldHave as $key => $value) {
+					if (!array_key_exists($key, $arr)) {
+						throw new \OutOfBoundsException('Key missing: ' . $key);
+					} else if (is_array($value) && is_array($arr[$key])) { # technically "else if" is not necessary but we want to be consistent here
+						$matches &= self::matches($arr[$key], $value, $throw);
+					} else if (is_array($value) || is_array($arr[$key])) {
+						throw new \TypeError('Type mismatch at key "' . $key . '"');
+					} else if (!fnmatch($value, $arr[$key])) {
+						throw new \UnexpectedValueException('Value mismatch at key "' . $key . '"');
+					}
+				}
+			} catch (\Exception $e) {
+				if ($throw) {
+					throw $e;
+				}
+
+				return false;
+			}
+
+			return $matches;
+		}
 	}

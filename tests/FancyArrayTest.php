@@ -340,4 +340,129 @@
 
 			$this->assertEquals(FancyArray::deepCount($arr), FancyArray::flatCount($arr));
 		}
+
+		public function testMatches() {
+			$matches = [
+				[
+					'description'			=>	'Same Array',
+
+					'is'		=>	[
+						'something'			=>	'wonderful',
+						'is'				=>	'emerging'
+					],
+
+					'should'	=>	[
+						'something'			=>	'wonderful',
+						'is'				=>	'emerging'
+					]
+				],
+
+				[
+					'description'			=>	'Wildcard Value',
+
+					'is'		=>	[
+						'something'			=>	'wonderful',
+						'is'				=>	'emerging'
+					],
+
+					'should'	=>	[
+						'something'			=>	'w*',
+						'is'				=>	'emerging'
+					]
+				],
+
+				[
+					'description'			=>	'Smaller Specification',
+
+					'is'		=>	[
+						'something'			=>	'wonderful',
+						'is'				=>	'emerging'
+					],
+
+					'should'	=>	[
+						'something'			=>	'*'
+					]
+				],
+
+				[
+					'description'			=>	'Nested',
+
+					'is'		=>	[
+						'something'			=>	'wonderful',
+						'is'				=>	[
+							'cool'			=>	'?',
+							'emerging'		=>	'!'
+						]
+					],
+
+					'should'	=>	[
+						'something'			=>	'*',
+						'is'				=>	[
+							'emerging'		=>	'!'
+						]
+					]
+				]
+			];
+
+			$nonMatches = [
+				[
+					'description'		=>	'Missing Key',
+					'exception'			=>	\OutOfBoundsException::class,
+
+					'is'				=>	[
+						'something'		=>	'wonderful'
+					],
+
+					'should'			=>	[
+						'something'			=>	'w*',
+						'is'				=>	'emerging'
+					]
+				],
+
+				[
+					'description'		=>	'Unexpected Value',
+					'exception'			=>	\UnexpectedValueException::class,
+
+					'is'				=>	[
+						'something'		=>	'wonderful',
+						'is'			=>	1
+					],
+
+					'should'			=>	[
+						'something'			=>	'w*',
+						'is'				=>	'emerging'
+					]
+				],
+
+				[
+					'description'		=>	'Type Mismatch',
+					'exception'			=>	\TypeError::class,
+
+					'is'				=>	[
+						'something'		=>	'wonderful',
+						'is'			=>	[
+							'wonderful?'
+						]
+					],
+
+					'should'			=>	[
+						'something'			=>	'w*',
+						'is'				=>	'emerging'
+					]
+				]
+			];
+
+			foreach ($matches as $item) {
+				$this->assertTrue(FancyArray::matches($item['is'], $item['should']), $item['description'] ?? null);
+			}
+
+			foreach ($nonMatches as $item) {
+				try {
+					FancyArray::matches($item['is'], $item['should'], true);
+					$this->fail('Expected exception "' . $item['exception'] . '" for case "' . $item['description'] . '"');
+				} catch (\Throwable $e) {
+					$this->assertInstanceOf($item['exception'], $e);
+				}
+			}
+		}
 	}
