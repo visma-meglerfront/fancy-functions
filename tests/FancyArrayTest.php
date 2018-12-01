@@ -2,7 +2,8 @@
 	namespace Adepto\Fancy\Tests;
 
 	use Adepto\Fancy\FancyArray;
-
+	use Adepto\Fancy\FancyString;
+	
 	/**
 	* @backupGlobals disabled
 	* @backupStaticAttributes disabled
@@ -339,6 +340,47 @@
 			];
 
 			$this->assertEquals(FancyArray::deepCount($arr), FancyArray::flatCount($arr));
+		}
+		
+		public function testToXML() {
+			$source = [
+				'Name'		=>	'Herbert',
+				
+				'Address'	=>	[
+					'Postcode'		=>	'0301',
+					'City'			=>	'Oslo',
+					
+					'Test'			=>	[
+						'with'		=>	'values_anyone?'
+					],
+					
+					'xsd:ns'		=>	'bla'
+				],
+				
+				'Product'	=>	[
+					[
+						'name'		=>	'Electricity'
+					],
+					
+					[
+						'name'		=>	'Gas'
+					]
+				]
+			];
+			
+			$expectation = '<?xml version="1.0" encoding="UTF-8"?><Name>Herbert</Name><Address><Postcode>0301</Postcode><City>Oslo</City><Test><with>values_anyone?</with></Test><xsd:ns>bla</xsd:ns></Address><Product><name>Electricity</name></Product><Product><name>Gas</name></Product>';
+			$actual = FancyArray::toXML($source);
+			$actualClean = str_replace([
+				"\n",
+				"> <",
+				">  <"
+			], [
+				'',
+				'><',
+				'><',
+			], $actual);
+			
+			$this->assertEquals($expectation, $actualClean, 'toXML');
 		}
 
 		public function testMatches() {

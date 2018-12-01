@@ -1,6 +1,9 @@
-<?php
+<?php /** @noinspection PhpComposerExtensionStubsInspection */
 	namespace Adepto\Fancy;
 
+	use InvalidArgumentException;
+	use XMLWriter;
+	
 	/**
 	 * FancyArray
 	 *
@@ -642,6 +645,109 @@
 			fclose($fp);
 			
 			return $csvString;
+		}
+		
+		/**
+		 * Convert an array to an XML string.
+		 * Namespaced tags are supported by simply including it in the key name, e.g. "xsd:schema". Make sure
+		 * to wrap your array in a root element and declare your namespaces.
+		 *
+		 * This function requires XMLWriter (ext-xmlwriter).
+		 *
+		 * This is how the conversion works:
+		 *
+		 * - key/value pairs:
+		 *     <key>Value</key>
+		 *
+		 * - sequential array as a child:
+		 *     <child>
+		 *         <key>Value</key>
+		 *     </child>
+		 *     <child>
+		 *         <key>Value</key>
+		 *     </child>
+		 *
+		 * Example:
+		 *     [
+		 *         'key'    =>  'value',
+		 *         'child'  =>  [
+		 *              [ 'a' => 1 ],
+		 *              [ 'a' => 2 ]
+		 *          ]
+		 *     ]
+		 *
+		 * becomes:
+		 *     <?xml version="1.0" charset="utf-8" ?>
+		 *     <key>Value</key>
+		 *     <child>
+		 *         <a>1</a>
+		 *     </child>
+		 *     <child>
+		 *         <a>2</a>
+		 *     </child>
+		 *
+		 * @param array $array Source Array
+		 * @param array $namespaces List of namespaces to declare on the root element, key is the prefix, value the URL the namespace uses.
+		 *                          An empty key represents the default namespace (xmlns="…").
+		 *
+		 * @throws InvalidArgumentException If namespaces are declared but there is more than one root element.
+		 *
+		 * @return string
+		 */
+		public static function toXML(array $array, array $namespaces = []): string {
+			$writer = new XMLWriter();
+			
+			$writer->openMemory();
+			$writer->setIndent(true);
+			$writer->startDocument('1.0', 'utf-8');
+			
+			self::appendToXML($array, $writer, null, $namespaces);
+			
+			$writer->endDocument();
+			
+			return $writer->outputMemory();
+		}
+		
+		protected static function appendToXML($thing, XMLWriter $writer, $parentKey = null, array $namespaces = []) {
+			if (!is_array($thing)) {
+				$writer->writeElement($parentKey, $thing);
+				return;
+			}
+			
+			if (self::isSequential($thing)) {
+				foreach ($thing as $subArray) {
+					$writer->startElement($parentKey);
+					self::appendToXML($subArray, $writer, $parentKey, $namespaces);
+					$writer->endElement();
+				}
+				
+				return;
+			}
+			
+			if ($parentKey === null && count($thing) > 1 && count($namespaces)) {
+				throw new \InvalidArgumentException('Source array must have exactly one root element when using namespaces.');
+			}
+			
+			foreach ($thing as $key => $item) {
+				if (is_array($item)) {
+					if (self::isSequential($item)) {
+						self::appendToXML($item, $writer, $key, $namespaces);
+					} else {
+						$writer->startElement($key);
+						
+						if ($parentKey === null) {
+							foreach ($namespaces as $prefix => $url) {
+								$writer->writeAttribute(empty($prefix) ? 'xmlns' : 'xmlns:' . $prefix, $url);
+							}
+						}
+						
+						self::appendToXML($item, $writer, $key, $namespaces);
+						$writer->endElement();
+					}
+				} else {
+					self::appendToXML($item, $writer, $key, $namespaces);
+				}
+			}
 		}
 
 		/**

@@ -152,6 +152,12 @@ static toCSV(array $arr, string $delimiter = ';'): string
 Convert an array to a CSV string. First array are the headings, subsequent arrays the contents.
 
 ```php
+static toXML(array $arr, array $namespaces = []): string
+```
+Convert an array to an XML string. Provide namespaces as a key/value array and use the namespace prefix
+in the keys of the source array, e.g. "xsd:schema".
+
+```php
 static flipSequential(array $arr, $default = 0): array
 ```
 Flip key and value in an array with a default value.
