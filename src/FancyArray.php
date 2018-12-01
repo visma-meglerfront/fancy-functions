@@ -53,14 +53,14 @@
 
 			return $ret;
 		}
-
+		
 		/**
 		 * Flatten an array from a tree-like structure.
 		 * As opposed to {@see flatten} this DOES retain keys, however.
-		 * Nested keys are joined by {@param glue} in the flattened array
+		 * Nested keys are joined by {
 		 *
-		 * @param  array  $arr             The array to flatten
-		 * @param  string $glue            The glue to join nested keys. '_' by default.
+		 * @param  array  $arr  The array to flatten
+		 * @param  string $glue The glue to join nested keys. '_' by default.
 		 *
 		 * @return  array  The flattened array with (optionally joined) nested keys
 		 */
@@ -81,14 +81,14 @@
 
 			return $flattened;
 		}
-
+		
 		/**
 		 * Flatten an array from a tree-like structure.
 		 * This copies values from the origin array into a list of sequential flat values
-		 * Nested keys are joined by {@param glue} in the flattened array
+		 * Nested keys are joined by {
 		 *
-		 * @param  array  $arr             The array to flatten
-		 * @param  string $glue            The glue to join nested keys. '_' by default.
+		 * @param  array  $arr  The array to flatten
+		 * @param  string $glue The glue to join nested keys. '_' by default.
 		 *
 		 * @return  array  The flattened array with (optionally joined) nested key values
 		 */
@@ -425,12 +425,14 @@
 
 			return false;
 		}
-
+		
 		/**
 		 * Check that all elements of the array are of a certain class.
-		 * 
+		 *
 		 * @param  array  $array The array
 		 * @param  string $class The class
+		 *
+		 * @throws \Exception
 		 */
 		public static function assertType(array $array, string $class) {
 			foreach ($array as $object) {
@@ -553,8 +555,9 @@
 		/**
 		 * See Python
 		 *
-		 * @param  array[]  ...$arr  The arrays to zip
-		 * @return array The zipped array
+		 * @param  array ...$arr  The arrays to zip
+		 *
+		 * @return array          The zipped array
 		 */
 		public static function zip(array ...$arr) {
 			return array_map([static::class, 'splat'], ...$arr);
@@ -689,7 +692,7 @@
 				array_filter($arr, FancyClosure::negate($fn))
 			];
 		}
-
+		
 		/**
 		 * Check if an array matches specific strings or other values, supports wildcards.
 		 * e.g.: your array is [ 'hello' => 'there' ] and your specification requires [ 'hello' => 'th*' ], it would match
@@ -702,6 +705,7 @@
 		 * @throws \OutOfBoundsException     if key could not be found and $throw is true
 		 * @throws \TypeError                if value types don't match and $throw is true
 		 * @throws \UnexpectedValueException if value has same type but is still not the same and $throw is true
+		 * @throws \Exception                Never actually thrown by itself, just listed here to make the IDE shut up
 		 *
 		 * @return bool
 		 */
