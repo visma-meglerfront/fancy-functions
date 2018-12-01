@@ -617,15 +617,31 @@
 		 * Convert an array to a CSV string
 		 * First array are the headings, subsequent arrays the contents
 		 *
+		 *
+		 *
 		 * @param  array  $arr       Array
 		 * @param  string $delimiter Delimiter to use, defaults to ';' for use with stupid Excel
 		 *
 		 * @return string
 		 */
 		public static function toCSV(array $arr, string $delimiter = ';'): string {
-			return implode("\n", array_map(function($fields) use($delimiter) {
-				return implode($delimiter, FancyFunctions::escapeCSVFields($fields));
-			}, $arr));
+			$fp = fopen('php://temp', 'w+');
+			
+			if ($fp === false) {
+				throw new \RuntimeException('Could not open memory stream.');
+			}
+			
+			foreach ($arr as $fields) {
+				if (fputcsv($fp, $fields, $delimiter) === false) {
+					throw new \InvalidArgumentException('Could not convert fields to CSV: ' . implode($delimiter, $fields));
+				}
+			}
+			
+			rewind($fp);
+			$csvString = stream_get_contents($fp);
+			fclose($fp);
+			
+			return $csvString;
 		}
 
 		/**
