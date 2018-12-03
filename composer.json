@@ -29,6 +29,10 @@
     "require-dev": {
         "phpunit/phpunit": "^6.0"
     },
+    "suggest": {
+        "ext-xml": "Required for some XML functionality",
+        "ext-xmlwriter": "Required for some XML functionality"
+    },
     "scripts": {
         "test": "php vendor/bin/phpunit -c phpunit.xml --colors=always"
     }
