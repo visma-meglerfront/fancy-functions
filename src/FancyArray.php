@@ -763,6 +763,29 @@
 				return $default;
 			}, array_flip($arr));
 		}
+		
+		/**
+		 * Map an array recursively, meaning visiting only the leafs
+		 *
+		 * @param callable $callback     Callback to apply. Return the new value here.
+		 * @param array    $array        Array to map
+		 * @param bool     $preserveKeys Whether or not to preserve keys, defaults to true
+		 *
+		 * @return array
+		 */
+		public static function mapRecursive(callable $callback, array $array, bool $preserveKeys = true) {
+			$func = function ($item) use (&$func, &$callback) {
+				return is_array($item) ? array_map($func, $item) : call_user_func($callback, $item);
+			};
+			
+			$mapped = array_map($func, $array);
+			
+			if ($preserveKeys) {
+				return array_combine(array_keys($array), $mapped);
+			}
+			
+			return $mapped;
+		}
 
 		/**
 		 * Check if all elements of an array fulfill a given predicate closure
