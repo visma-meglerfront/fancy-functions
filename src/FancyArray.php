@@ -469,6 +469,27 @@
 
 			return $diff;
 		}
+		
+		/**
+		 * Return all the key-value pairs that are in the first and in the second array.
+		 *
+		 *
+		 * @param array $first
+		 * @param array $second
+		 *
+		 * @return array
+		 */
+		public static function intersectKeysRecursive(array $first, array $second): array {
+			foreach ($first as $key => $value) {
+				if (!isset($second[$key])) {
+					unset($first[$key]);
+				} else if (is_array($value)) {
+					$first[$key] = self::intersectKeysRecursive($value, (array) $second[$key]);
+				}
+			}
+			
+			return $first;
+		}
 
 		/**
 		 * Reduce n-dimensional access to 1-dimensional access.
@@ -836,6 +857,31 @@
 				array_filter($arr, $fn),
 				array_filter($arr, FancyClosure::negate($fn))
 			];
+		}
+
+		/**
+		 * Trim array to the first occurrence of an element php would evaluate to false.
+		 *
+		 * @param array $arr
+		 *
+		 * @return array
+		 */
+		public static function trim(array $arr) {
+			$rev = array_values(array_reverse($arr));
+			$length = count($arr);
+			
+			for ($i = 0; $i < count($rev); $i++) {
+				if (!!$rev[$i]) {
+					if ($i === 0) {
+						return $arr;
+					}
+					
+					$length = -$i;
+					break;
+				}
+			}
+			
+			return array_slice($arr, 0, $length);
 		}
 		
 		/**
