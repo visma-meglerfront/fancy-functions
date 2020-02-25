@@ -624,6 +624,12 @@
 				return false;
 			}
 		}
+		
+		public static function sort(array $dates) {
+			sort($dates);
+			
+			return $dates;
+		}
 
 		/**
 		 * Get all dates between startDate and endDate in an array.

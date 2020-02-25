@@ -249,4 +249,23 @@
 			$this->assertEquals(FancyDateTime::interval(new FancyDateTime('10.03.2017'), new FancyDateTime('13.03.2017')),
 			['10.03.2017', '11.03.2017', '12.03.2017', '13.03.2017']);
 		}
+		
+		public function testSort() {
+			$yesterday = new FancyDateTime('yesterday');
+			$today = new FancyDateTime('today');
+			$tomorrow = new FancyDateTime('tomorrow');
+			
+			$this->assertEquals(
+				FancyDateTime::sort([
+					$today,
+					$yesterday,
+					$tomorrow
+				]),
+				[
+					$yesterday,
+					$today,
+					$tomorrow
+				]
+			);
+		}
 	}
