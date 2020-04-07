@@ -11,6 +11,7 @@
 	 */
 	class FancyDateTime extends \DateTime {
 		const FORMAT_MYSQL = 'Y-m-d H:i:s';
+		const FORMAT_HUMAN = 'd.m.Y H:i';
 
 		const WEEKDAY_MONDAY = 1;
 		const WEEKDAY_TUESDAY = 2;
@@ -464,6 +465,10 @@
 		 */
 		public function toMySQL() {
 			return $this->format(self::FORMAT_MYSQL);
+		}
+		
+		public function toHumanFormat() {
+			return $this->format(self::FORMAT_HUMAN);
 		}
 		
 		public function __toString() {
