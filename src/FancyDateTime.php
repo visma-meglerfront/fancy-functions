@@ -1,6 +1,9 @@
 <?php
 	namespace Adepto\Fancy;
 
+	use DatePeriod;
+	use TypeError;
+	
 	/**
 	 * FancyDateTime
 	 * Extended version of the built-in DateTime class.
@@ -24,20 +27,25 @@
 		/**
 		 * Create FancyDateTime from a timestamp.
 		 *
-		 * @param  mixed $ts Timestamp
+		 * @param string|int $ts Timestamp
 		 *
 		 * @return FancyDateTime
 		 */
-		public static function fromTimestamp(int $ts) {
-			return (new self())->setTimestamp($ts);
+		public static function fromTimestamp($ts): FancyDateTime {
+			if (!is_numeric($ts)) {
+				throw new TypeError('Timestamp must be int or numerical string');
+			}
+			
+			return (new self())->setTimestamp((int) $ts);
 		}
-
+		
 		/**
 		 * Create FancyDateTime from a MySQL string
 		 *
 		 * @param string $mySQL MySQL database stamp
 		 *
 		 * @return FancyDateTime
+		 * @throws \Exception
 		 */
 		public static function fromMySQL(string $mySQL) {
 			return self::createFromFormat(self::FORMAT_MYSQL, $mySQL);
@@ -49,7 +57,7 @@
 		 *
 		 * @return FancyDateTime
 		 */
-		public static function todayAtMidnight() {
+		public static function todayAtMidnight(): FancyDateTime {
 			return (new self())->setTime(0, 0, 0);
 		}
 
@@ -80,7 +88,7 @@
 		 * @param \DateTimeInterface $other The FancyDateTime to clone
 		 * @return FancyDateTime The cloned object
 		 */
-		public static function fromDateTime(\DateTimeInterface $other) {
+		public static function fromDateTime(\DateTimeInterface $other): FancyDateTime {
 			return self::fromTimestamp($other->getTimestamp());
 		}
 
@@ -92,19 +100,20 @@
 		 * Parsing a single format does not raise an exception to comply with standard
 		 * DateTime behaviour.
 		 *
-		 * @param string|array $format   Format(s) to try
-		 * @param string       $time     The time thing to parse
+		 * @param string|array  $format   Format(s) to try
+		 * @param string        $datetime The time thing to parse
 		 * @param \DateTimeZone $timezone A timezone
 		 *
 		 * @return bool|FancyDateTime
 		 * @throws \Exception If $format is an array of formats but $time didn't match one
 		 */
-		public static function createFromFormat($format, $time, $timezone = null) {
+		#[\ReturnTypeWillChange]
+		public static function createFromFormat($format, $datetime, $timezone = null) {
 			if (is_array($format)) {
 				// reverse because private method tryFormats uses "pop" instead of "shift" for performance reasons
-				return self::tryFormats(array_reverse($format), $time, $timezone);
+				return self::tryFormats(array_reverse($format), $datetime, $timezone);
 			} else {
-				$dt = \DateTime::createFromFormat($format, $time, $timezone);
+				$dt = \DateTime::createFromFormat($format, $datetime, $timezone);
 
 				if ($dt instanceof \DateTime) {
 					return self::fromDateTime($dt);
@@ -113,16 +122,16 @@
 				return $dt;
 			}
 		}
-
+		
 		/**
-		 * Try creating FancyDateTime from a string usung diffrent formats.
-		 * 
-		 * @param  array  $formats  		The formats that will be tried
-		 * @param  string $time     		The time that is used to create the FancyDateTiemobject
-		 * @param  \DateTimeZone $timezone 	A timezone
-		 * 
+		 * Try creating FancyDateTime from a string using different formats.
+		 *
+		 * @param array              $formats  The formats that will be tried
+		 * @param string             $time     The time that is used to create the FancyDateTime object
+		 * @param \DateTimeZone|null $timezone A timezone
+		 *
 		 * @return FancyDateTime
-		 * @throws \Exception 					If no FancyDateTime can be created
+		 * @throws \Exception If no FancyDateTime can be created
 		 */
 		private static function tryFormats(array $formats, string $time, \DateTimeZone $timezone = null): FancyDateTime {
 			if (!count($formats)) {
@@ -147,12 +156,12 @@
 		/**
 		 * Convert a timestamp to a given date format.
 		 *
-		 * @param  int    $ts     Timestamp
-		 * @param  string $format Format, default = 'd.m.Y'
+		 * @param string|int    $ts     Timestamp
+		 * @param string        $format Format, default = 'd.m.Y'
 		 *
 		 * @return string         Formatted date
 		 */
-		public static function timestampToDate(int $ts, $format = 'd.m.Y') {
+		public static function timestampToDate($ts, string $format = 'd.m.Y'): string {
 			return self::fromTimestamp($ts)->format($format);
 		}
 
@@ -161,7 +170,7 @@
 		 *
 		 * @return boolean
 		 */
-		public function isWeekend() {
+		public function isWeekend(): bool {
 			return $this->isWeekday(self::WEEKDAY_SATURDAY) || $this->isWeekday(self::WEEKDAY_SUNDAY);
 		}
 		
@@ -174,17 +183,17 @@
 		 *
 		 * @return boolean
 		 */
-		public function isWeekday(int $day) {
+		public function isWeekday(int $day): bool {
 			return $this->format('w') == $day;
 		}
 		
 		// @Override
-		public function diff($object = 'now', $absolute = null) {
-			if (!$object instanceof \DateTime) {
-				$object = new \DateTime();
+		public function diff($targetObject = 'now', $absolute = null): \DateInterval {
+			if (!$targetObject instanceof \DateTime) {
+				$targetObject = new \DateTime();
 			}
 			
-			return parent::diff($object, $absolute);
+			return parent::diff($targetObject, $absolute);
 		}
 		
 		/**
@@ -281,19 +290,23 @@
 				59
 			);
 		}
-
+		
 		/**
 		 * Normalize this date to morning midnight
 		 * Especially useful if only the date and not the time matters
+		 *
+		 * @param bool $cascade
 		 *
 		 * @return FancyDateTime
 		 */
 		public function startOfDay(bool $cascade = true): FancyDateTime {
 			return ($cascade ? $this->startOfHour() : $this)->setTime(0, 0, 0);
 		}
-
+		
 		/**
 		 * Normalize this date to evening midnight
+		 *
+		 * @param bool $cascade
 		 *
 		 * @return FancyDateTime
 		 */
@@ -413,16 +426,16 @@
 		/**
 		 * Checks whether this date is divisible by a certain factor of minutes.
 		 *
-		 * @param  \DateTimeInterface $end     End to check, i.e. to check whether this is true in the next 10 minutes pass a date in 10 minutes
-		 * @param  int      $minutes Factor to check for
+		 * @param \DateTimeInterface $end     End to check, i.e. to check whether this is true in the next 10 minutes pass a date in 10 minutes
+		 * @param int                $minutes Factor to check for
 		 *
 		 * @return boolean
 		 */
-		public function isDivisibleByMinutes(\DateTimeInterface $end, $minutes): bool {
+		public function isDivisibleByMinutes(\DateTimeInterface $end, int $minutes): bool {
 			$midnight = self::todayAtMidnight();
 			
 			$interval = \DateInterval::createFromDateString('1 min');
-			$times = new \DatePeriod($this, $interval, $end);
+			$times = new DatePeriod($this, $interval, $end);
 			
 			foreach ($times as $time) {
 				$thisMinutesSinceMidnight = $midnight->diff($time);
@@ -448,9 +461,9 @@
 		}
 
 		/**
-		 * Check if th given DateTimeobject equals this to the second.
+		 * Check if th given DateTime object equals this to the second.
 		 * 
-		 * @param  \DateTime $dt DateTimeobject
+		 * @param  \DateTime $dt DateTime object
 		 * 
 		 * @return boolean        
 		 */
@@ -463,7 +476,7 @@
 		 *
 		 * @return string
 		 */
-		public function toMySQL() {
+		public function toMySQL(): string {
 			return $this->format(self::FORMAT_MYSQL);
 		}
 		
@@ -481,13 +494,13 @@
 		 * Get the first and last possible dates for a given timeframe
 		 * based in a timestamp.
 		 *
-		 * @param  int $timestamp Timestamp
-		 * @param  string $interval Timeframe: 'year', 'month', 'week' or 'day'
-		 * @param  int $offset An optional numeric offset, relative to the given $interval unit
+		 * @param int    $timestamp Timestamp
+		 * @param string $interval  Timeframe: 'year', 'month', 'week' or 'day'
+		 * @param int    $offset    An optional numeric offset, relative to the given $interval unit
 		 *
 		 * @return array
 		 */
-		public static function getFirstAndLastPossibleDate($timestamp, $interval, $offset = 0) {
+		public static function getFirstAndLastPossibleDate(int $timestamp, string $interval, int $offset = 0): array {
 			$firstDate = new self();
 			$firstDate->setTimestamp($timestamp);
 
@@ -569,15 +582,15 @@
 		/**
 		 * Takes a birthdate and normalizes it.
 		 *
-		 * @param  String $format     Format for the birthdate, e.x. dmy, d.m.Y, ...
-		 * @param  String $birthdate  Birthdate in the specified $format
-		 * @param  String $returnType Return Type, either 'string', 'object' or 'integer'
+		 * @param String $format     Format for the birthdate, e.x. dmy, d.m.Y, ...
+		 * @param String $birthdate  Birthdate in the specified $format
+		 * @param String $returnType Return Type, either 'string', 'object' or 'integer'
 		 *
-		 * @throws \InvalidArgumentException when $birthdate cannot be parsed by FancyDateTime
+		 * @return bool|FancyDateTime|int|string
 		 *
-		 * @return mixed
+		 * @throws \InvalidArgumentException|\Exception when $birthdate cannot be parsed by FancyDateTime
 		 */
-		public static function normalizeBirthdate($format, $birthdate, $returnType = 'string') {
+		public static function normalizeBirthdate(string $format, string $birthdate, string $returnType = 'string') {
 			$dt = self::createFromFormat($format, $birthdate);
 
 			if (!$dt || (int) $birthdate == 0) {
@@ -621,7 +634,7 @@
 		 * 
 		 * @return boolean
 		 */
-		public static function isValid(string $input) {
+		public static function isValid(string $input): bool {
 			try {
 				$ignore = new self($input);
 				return $ignore instanceof FancyDateTime;
@@ -648,7 +661,7 @@
 			$interval = new \DateInterval('P1D');
 			$clonedEnd = clone $endDate;
 
-			$range = new \DatePeriod($startDate, $interval, $clonedEnd->modify('+1 day'));
+			$range = new DatePeriod($startDate, $interval, $clonedEnd->modify('+1 day'));
 
 			$arr = [];
 

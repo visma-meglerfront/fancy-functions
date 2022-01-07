@@ -46,11 +46,11 @@
 		 * Get the luminance of a color.
 		 * This is a perceived value by humans.
 		 *
-		 * @param  string $hex Hex Color value (# is removed automatically)
+		 * @param string $hex Hex Color value (# is removed automatically)
 		 *
 		 * @return int
 		 */
-		public static function getLuminance(string $hex): string {
+		public static function getLuminance(string $hex): int {
 			$hex = str_replace('#', '', $hex);
 
 			$r = hexdec(substr($hex, 0, 2));
@@ -58,9 +58,7 @@
 			$b = hexdec(substr($hex, 4, 2));
 
 			// (0.2126*R + 0.7152*G + 0.0722*B) -> http://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
-			$luminance = (0.2126 * $r + 0.7152 * $g + 0.722 * $b);
-
-			return $luminance;
+			return (0.2126 * $r + 0.7152 * $g + 0.722 * $b);
 		}
 
 		/**
@@ -116,7 +114,7 @@
 			// We multiply by 100 to turn the decimal into a readable percent value.
 			$computedV = 100 * $maxRGB;
 
-			// Special case if hueless (equal parts RGB make black, white, or grays)
+			// Special case if hue-less (equal parts RGB make black, white, or grays)
 			// Note that Hue is technically undefined when chroma is zero, as
 			//   attempting to calculate it would cause division by zero (see
 			//   below), so most applications simply substitute a Hue of zero.
@@ -148,7 +146,7 @@
 			$computedH = 60 * $h;
 
 			// If the computed hue is bigger than 360,
-			//   calculate its modulo 360 so it fits in range from 0 to 360.
+			//   calculate its modulo 360, so it fits in range from 0 to 360.
 			if ($computedH >= 360) {
 				$computedH = $computedH % 360;
 			}

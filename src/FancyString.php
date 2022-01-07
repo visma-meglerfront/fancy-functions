@@ -79,13 +79,13 @@
 		/**
 		 * Add an ellipsis (…) to the center of the string if it is too long.
 		 *
-		 * @param  int    $str    String to shorten
-		 * @param  int    $maxLen Maximum Length ($char included)
-		 * @param  int 	  $char   Char to use (default: …)
+		 * @param string     $str    String to shorten
+		 * @param int        $maxLen Maximum Length ($char included)
+		 * @param int|string $char   Char to use (default: …)
 		 *
 		 * @return string         String with ellipsis in the center
 		 */
-		public static function ellipsisCenter($str, $maxLen, $char = '…'): string {
+		public static function ellipsisCenter(string $str, int $maxLen, $char = '…'): string {
 			if (mb_strlen($str) > ($maxLen + mb_strlen($char))) {
 				$characters = floor($maxLen / 2);
 				
@@ -98,13 +98,13 @@
 		/**
 		 * Add an ellipsis (…) to the end of the string if it is too long.
 		 *
-		 * @param  int    $str    String to shorten
-		 * @param  int    $maxLen Maximum Length ($char included)
-		 * @param  int 	  $char   Char to use (default: …)
+		 * @param string     $str    String to shorten
+		 * @param int        $maxLen Maximum Length ($char included)
+		 * @param int|string $char   Char to use (default: …)
 		 *
 		 * @return string         String with ellipsis at the end
 		 */
-		public static function ellipsisEnd($str, $maxLen, $char = '…'): string {
+		public static function ellipsisEnd(string $str, int $maxLen, $char = '…'): string {
 			if (mb_strlen($str) > ($maxLen + mb_strlen($char))) {
 				return mb_substr($str, 0, $maxLen) . $char;
 			}
@@ -115,12 +115,12 @@
 		/**
 		 * Generate a random string based on a character set.
 		 *
-		 * @param  integer $length  Length of the random string
-		 * @param  string  $charset Chars to be used for the random string
+		 * @param integer $length  Length of the random string
+		 * @param string  $charset Chars to be used for the random string
 		 *
 		 * @return string           Random String
 		 */
-		public static function randString($length = 12, $charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'): string {
+		public static function randString(int $length = 12, string $charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'): string {
 			$str = '';
 
 			for ($i = 0; $i < $length; $i++) {
@@ -135,14 +135,14 @@
 		 * This is useful for comparing values which can contain
 		 * whitespaces.
 		 *
-		 * @param  mixed $var  Variable, either an array or a string
+		 * @param  array|string $var  Variable, either an array or a string
 		 *
-		 * @return mixed       Returns a cleaned array or string
+		 * @return array|string       Returns a cleaned array or string
 		 */
 		public static function removeWhitespace($var) {
 			if (is_array($var)) {
 				return array_map(function($val) {
-					return removeWhitespace($val);
+					return self::removeWhitespace($val);
 				}, $var);
 			}
 			
@@ -152,11 +152,11 @@
 		/**
 		 * Returns the text in a way that humans and computers can read it.
 		 * 
-		 * @param  string $text the text to slugify
+		 * @param string $text the text to slugify
 		 * 
 		 * @return string       the slugified text
 		 */
-		public static function slugify($text) {
+		public static function slugify(string $text): string {
 			// replace non letter or digits by -
 			$text = preg_replace('~[^\pL\d]+~u', '-', $text);
 

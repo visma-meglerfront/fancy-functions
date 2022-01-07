@@ -114,7 +114,7 @@
 		}
 
 		/**
-		 * Check whether a given array is sequential
+		 * Check whether a given array is sequential.
 		 * Sequential arrays are specified by having numeric keys in ascending order
 		 * They are represented by [] in JSON
 		 *
@@ -202,7 +202,7 @@
 		 */
 		public static function difference(...$arrays): array {
 			if (count($arrays) < 2) {
-				throw new \InvalidArgumentException('At least two arrays required.');
+				throw new InvalidArgumentException('At least two arrays required.');
 			}
 
 			$baseArray = array_shift($arrays);
@@ -223,29 +223,30 @@
 		 * @param array $toEncode The array values to encode
 		 * @return string The base64 encoded JSON
 		 */
-		public static function dbEncode(array $toEncode) {
+		public static function dbEncode(array $toEncode): string {
 			return base64_encode(json_encode($toEncode));
 		}
 
 		/**
-		 * Deocdes longer array values stored in the DB
+		 * Decodes longer array values stored in the DB
 		 *
 		 * @param $toDecode string The encoded value from the Database
+		 *
 		 * @return array The decoded PHP array
 		 */
-		public static function dbDecode($toDecode) {
+		public static function dbDecode(string $toDecode): array {
 			return json_decode(base64_decode($toDecode));
 		}
 
 		/**
 		 * Find the highest (recursive) count in an array.
 		 *
-		 * @param  array   $arr       Array to count
-		 * @param  boolean $countSelf Whether to count the base arrays' size as well
+		 * @param array   $arr       Array to count
+		 * @param boolean $countSelf Whether to count the base arrays' size as well
 		 *
 		 * @return int
 		 */
-		public static function findHighestCount(array $arr, $countSelf = false) {
+		public static function findHighestCount(array $arr, bool $countSelf = false): int {
 			if (count($arr) < 1) return 0;
 
 			$highestCount = $countSelf ? count($arr) : 0;
@@ -265,13 +266,13 @@
 
 		/**
 		 * Copy an array for use with stupid SOAP servers.
-		 * I know: PHP copys arrays itself, but: SOAP is special, as always.
+		 * I know: PHP copies arrays itself, but: SOAP is special, as always.
 		 *
-		 * @param  array $source Source Array
+		 * @param array $source Source Array
 		 *
 		 * @return array
 		 */
-		public static function clone($source): array {
+		public static function clone(array $source): array {
 			$result = [];
 
 			foreach ($source as $key => $item) {
@@ -284,13 +285,13 @@
 		/**
 		 * Move an element in an array.
 		 *
-		 * @param  array $arr Array
-		 * @param  int   $old Old Position
-		 * @param  int   $new New Position
+		 * @param array      $arr Array
+		 * @param int|string $old Old Position
+		 * @param int        $new New Position
 		 *
 		 * @return array
 		 */
-		public static function moveElement(array $arr, $old, $new): array {
+		public static function moveElement(array $arr, $old, int $new): array {
 			if (is_int($old)) {
 				$tmp = array_splice($arr, $old, 1);
 				array_splice($arr, $new, 0, $tmp);
@@ -311,6 +312,8 @@
 					$output[$key] = $item;
 					$i++;
 				}
+				
+				return $output;
 			}
 
 			return $arr;
@@ -394,7 +397,7 @@
 		}
 
 		/**
-		 * Check if all of the given elements are in the array.
+		 * Check if all the given elements are in the array.
 		 * 
 		 * @param  array   $haystack The array
 		 * @param  array   $needles  The values that should be in the array
@@ -556,6 +559,7 @@
 		 * @param array $keys The keys to regroup after
 		 *
 		 * @return array
+		 * @noinspection SpellCheckingInspection
 		 */
 		public static function ladaGroup(array $arr, array $keys): array {
 			$delimiter = '%%LADA%%';
@@ -583,7 +587,7 @@
 		 *
 		 * @return array          The zipped array
 		 */
-		public static function zip(array ...$arr) {
+		public static function zip(array ...$arr): array {
 			return array_map([static::class, 'splat'], ...$arr);
 		}
 
@@ -594,7 +598,7 @@
 		 *
 		 * @return array The packed array
 		 */
-		public static function splat(...$args) {
+		public static function splat(...$args): array {
 			return $args;
 		}
 
@@ -657,7 +661,7 @@
 			
 			foreach ($arr as $fields) {
 				if (fputcsv($fp, $fields, $delimiter) === false) {
-					throw new \InvalidArgumentException('Could not convert fields to CSV: ' . implode($delimiter, $fields));
+					throw new InvalidArgumentException('Could not convert fields to CSV: ' . implode($delimiter, $fields));
 				}
 			}
 			
@@ -746,7 +750,7 @@
 			}
 			
 			if ($parentKey === null && count($thing) > 1 && count($namespaces)) {
-				throw new \InvalidArgumentException('Source array must have exactly one root element when using namespaces.');
+				throw new InvalidArgumentException('Source array must have exactly one root element when using namespaces.');
 			}
 			
 			foreach ($thing as $key => $item) {
@@ -774,12 +778,12 @@
 		/**
 		 * Flip key and value in an array with a default value.
 		 * 
-		 * @param  array   $arr     Array you want to flip 
-		 * @param  integer $default Default value
+		 * @param array  $arr     Array you want to flip
+		 * @param int    $default Default value
 		 * 
 		 * @return array
 		 */
-		public static function flipSequential(array $arr, $default = 0): array {
+		public static function flipSequential(array $arr, int $default = 0): array {
 			return array_map(function() use($default) {
 				return $default;
 			}, array_flip($arr));
@@ -790,11 +794,11 @@
 		 *
 		 * @param callable $callback     Callback to apply. Return the new value here.
 		 * @param array    $array        Array to map
-		 * @param bool     $preserveKeys Whether or not to preserve keys, defaults to true
+		 * @param bool     $preserveKeys Whether to preserve keys, defaults to true
 		 *
 		 * @return array
 		 */
-		public static function mapRecursive(callable $callback, array $array, bool $preserveKeys = true) {
+		public static function mapRecursive(callable $callback, array $array, bool $preserveKeys = true): array {
 			$func = function ($item) use (&$func, &$callback) {
 				return is_array($item) ? array_map($func, $item) : call_user_func($callback, $item);
 			};
@@ -816,7 +820,7 @@
 		 *
 		 * @return bool
 		 */
-		public static function all(array $arr, callable $fn) {
+		public static function all(array $arr, callable $fn): bool {
 			foreach ($arr as $item) {
 				if (!$fn($item)) {
 					return false;
@@ -834,7 +838,7 @@
 		 *
 		 * @return bool
 		 */
-		public static function any(array $arr, callable $fn) {
+		public static function any(array $arr, callable $fn): bool {
 			foreach ($arr as $item) {
 				if ($fn($item)) {
 					return true;
@@ -852,7 +856,7 @@
 		 *
 		 * @return array The partitioned array, where the first sub-array yields all "true" results, and the second array all "false" results
 		 */
-		public static function partition(array $arr, callable $fn) {
+		public static function partition(array $arr, callable $fn): array {
 			return [
 				array_filter($arr, $fn),
 				array_filter($arr, FancyClosure::negate($fn))
@@ -889,9 +893,9 @@
 		 * e.g.: your array is [ 'hello' => 'there' ] and your specification requires [ 'hello' => 'th*' ], it would match
 		 * Supports nesting of up to 255 arrays (PHP limitation).
 		 *
-		 * @param  array        $arr        Array to check
-		 * @param  array        $shouldHave Specification, see description
-		 * @param  bool|boolean $throw      if true, exceptions are thrown
+		 * @param  array    $arr        Array to check
+		 * @param  array    $shouldHave Specification, see description
+		 * @param  bool     $throw      if true, exceptions are thrown
 		 *
 		 * @throws \OutOfBoundsException     if key could not be found and $throw is true
 		 * @throws \TypeError                if value types don't match and $throw is true
@@ -907,7 +911,7 @@
 				foreach ($shouldHave as $key => $value) {
 					if (!array_key_exists($key, $arr)) {
 						throw new \OutOfBoundsException('Key missing: ' . $key);
-					} else if (is_array($value) && is_array($arr[$key])) { # technically "else if" is not necessary but we want to be consistent here
+					} else if (is_array($value) && is_array($arr[$key])) { # technically "else if" is not necessary, but we want to be consistent here
 						$matches &= self::matches($arr[$key], $value, $throw);
 					} else if (is_array($value) || is_array($arr[$key])) {
 						throw new \TypeError('Type mismatch at key "' . $key . '"');

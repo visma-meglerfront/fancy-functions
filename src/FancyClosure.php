@@ -24,9 +24,9 @@
 		 * @param  callable  $fn    Original closure/callable to curry
 		 * @param  mixed     $args  Arguments to bind from left
 		 *
-		 * @return callable
+		 * @return \Closure
 		 */
-		public static function curry(callable $fn, ...$args) {
+		public static function curry(callable $fn, ...$args): \Closure {
 			return function(...$additionalArgs) use($fn, $args) {
 				return $fn(...$args, ...$additionalArgs);
 			};
@@ -39,9 +39,9 @@
 		 * @param  callable $fn    Original closure/callable to curry
 		 * @param  mixed    $args  Arguments to bind from right
 		 *
-		 * @return callable
+		 * @return \Closure
 		 */
-		public static function curryRight(callable $fn, ...$args) {
+		public static function curryRight(callable $fn, ...$args): \Closure {
 			return function(...$additionalArgs) use($fn, $args) {
 				return $fn(...$additionalArgs, ...array_reverse($args));
 			};
@@ -55,7 +55,7 @@
 		 *
 		 * @return \Closure A function that always returns this value
 		 */
-		public static function always($val) {
+		public static function always($val): \Closure {
 			return function () use ($val) {
 				return $val;
 			};
@@ -69,7 +69,7 @@
 		 *
 		 * @return \Closure A function that compares its argument to $cmp
 		 */
-		public static function equal($cmp, bool $strict = false) {
+		public static function equal($cmp, bool $strict = false): \Closure {
 			return function ($val) use ($cmp, $strict) {
 				return $strict ? $val === $cmp : $val == $cmp;
 			};
@@ -82,7 +82,7 @@
 		 *
 		 * @return \Closure The negated function
 		 */
-		public static function negate(callable $fn) {
+		public static function negate(callable $fn): \Closure {
 			return function (...$args) use ($fn) {
 				return !$fn(...$args);
 			};
@@ -94,7 +94,7 @@
 		 *
 		 * @return \Closure The identity function
 		 */
-		public static function identity() {
+		public static function identity(): \Closure {
 			return function ($arg) {
 				return $arg;
 			};
@@ -110,7 +110,7 @@
 		 *
 		 * @return callable The composed function
 		 */
-		public static function compose(...$fns) {
+		public static function compose(...$fns): callable {
 			return array_reduce(array_reverse($fns), function ($carry, $item) {
 				return function (...$args) use ($carry, $item) {
 					return $item($carry(...$args));
@@ -125,7 +125,7 @@
 		 *
 		 * @return \Closure The closure that accesses any given array at $index
 		 */
-		public static function arrayAccess($index) {
+		public static function arrayAccess($index): \Closure {
 			return function ($val) use ($index) {
 				return $val[$index];
 			};
@@ -134,11 +134,11 @@
 		/**
 		 * Similar to {@see self::arrayAccess} but works with objects instead
 		 *
-		 * @param  string  $index  The access index
+		 * @param string $index The access index
 		 *
 		 * @return \Closure The closure that accesses any given object at $index
 		 */
-		public static function objectAccess($index) {
+		public static function objectAccess(string $index): \Closure {
 			return function ($val) use ($index) {
 				return $val->{$index};
 			};
@@ -152,7 +152,7 @@
 		 *
 		 * @return \Closure The closure to invoke $methodName
 		 */
-		public static function invoke(string $methodName, ...$params) {
+		public static function invoke(string $methodName, ...$params): \Closure {
 			return function ($val) use ($methodName, $params) {
 				return call_user_func([$val, $methodName], ...$params);
 			};
@@ -165,7 +165,7 @@
 		 *
 		 * @return \Closure The invoking closure
 		 */
-		public static function invoking(callable $fn) {
+		public static function invoking(callable $fn): \Closure {
 			return function (...$args) use ($fn) {
 				return call_user_func($fn, ...$args);
 			};
@@ -176,7 +176,7 @@
 		 *
 		 * @return \Closure
 		 */
-		public static function fnAdd() {
+		public static function fnAdd(): \Closure {
 			return function (...$args) {
 				return array_reduce($args, function ($carry, $item) {
 					return $carry + $item;
@@ -189,7 +189,7 @@
 		 *
 		 * @return \Closure
 		 */
-		public static function fnSubtract() {
+		public static function fnSubtract(): \Closure {
 			return function (...$args) {
 				return array_reduce($args, function ($carry, $item) {
 					return $carry - $item;
@@ -202,7 +202,7 @@
 		 *
 		 * @return \Closure
 		 */
-		public static function fnMultiply() {
+		public static function fnMultiply(): \Closure {
 			return function (...$args) {
 				return array_reduce($args, function ($carry, $item) {
 					return $carry * $item;
@@ -215,7 +215,7 @@
 		 *
 		 * @return \Closure
 		 */
-		public static function fnDivide() {
+		public static function fnDivide(): \Closure {
 			return function (...$args) {
 				return array_reduce($args, function ($carry, $item) {
 					return $carry / $item;
@@ -230,7 +230,7 @@
 		 *
 		 * @return \Closure A prepared closure
 		 */
-		public static function callUnpacked(callable $fn) {
+		public static function callUnpacked(callable $fn): \Closure {
 			return function (array $arr) use ($fn) {
 				return $fn(...$arr);
 			};
@@ -243,7 +243,7 @@
 		 *
 		 * @return \Closure A prepared closure
 		 */
-		public static function callPacked(callable $fn) {
+		public static function callPacked(callable $fn): \Closure {
 			return function (...$args) use ($fn) {
 				return $fn($args);
 			};
@@ -254,7 +254,7 @@
 		 *
 		 * @return \Closure
 		 */
-		public static function fnEmpty() {
+		public static function fnEmpty(): \Closure {
 			return function ($val) {
 				return empty($val);
 			};
@@ -265,7 +265,7 @@
 		 *
 		 * @return \Closure
 		 */
-		public static function fnIsset() {
+		public static function fnIsset(): \Closure {
 			return function ($val) {
 				return isset($val);
 			};
@@ -276,7 +276,7 @@
 		 *
 		 * @return \Closure
 		 */
-		public static function fnEcho() {
+		public static function fnEcho(): \Closure {
 			return function ($val) {
 				echo $val;
 			};
@@ -287,7 +287,7 @@
 		 *
 		 * @return \Closure
 		 */
-		public static function fnEchoEOL() {
+		public static function fnEchoEOL(): \Closure {
 			return function ($val) {
 				echo $val . PHP_EOL;
 			};
@@ -300,7 +300,7 @@
 		 *
 		 * @return \Closure
 		 */
-		public static function casting(string $toType) {
+		public static function casting(string $toType): \Closure {
 			return function ($var) use ($toType) {
 				settype($var, $toType);
 				return $var;

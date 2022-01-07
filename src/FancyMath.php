@@ -23,7 +23,7 @@
 		 *
 		 * @return array
 		 */
-		public static function permute(array $values, $length, $repetitive = false, $ordered = true, $inclusive = false, $bottom = 1) {
+		public static function permute(array $values, int $length, bool $repetitive = false, bool $ordered = true, bool $inclusive = false, int $bottom = 1): array {
 			if ($length <= 1 || $length > 7) {
 				return array_map(function($value) {
 					return [$value];
@@ -62,7 +62,7 @@
 		 *
 		 * @return int
 		 */
-		public static function binCoeff($n, $k) {
+		public static function binCoeff(int $n, int $k): int {
 			return self::fact($n) / (self::fact($k) * self::fact($n - $k));
 		}
 
@@ -74,7 +74,7 @@
 		 *
 		 * @return int
 		 */
-		public static function fact($n) {
+		public static function fact(int $n): int {
 			if ($n <= 1) return 1;
 			return $n * self::fact($n - 1);
 		}
@@ -87,7 +87,7 @@
 		 *
 		 * @return int
 		 */
-		public static function powLimit($n, $exp) {
+		public static function powLimit(int $n, int $exp): int {
 			if ($exp <= 0) return 1;
 			if ($exp == 1) return $n;
 			return $n * self::powLimit($n - 1, $exp - 1);

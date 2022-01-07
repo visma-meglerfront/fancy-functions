@@ -81,7 +81,7 @@
 		 *
 		 * @return string The standardized string
 		 */
-		public static function extrapolateSymbols(string $input) {
+		public static function extrapolateSymbols(string $input): string {
 			$usedDefaults = array_filter(self::LANGUAGE_SYMBOLS, function ($key) use ($input) {
 				return mb_strpos($input, $key) !== false;
 			}, ARRAY_FILTER_USE_KEY);
