@@ -2,7 +2,9 @@
 	namespace Adepto\Fancy\Tests;
 	
 	use Adepto\Fancy\FancyDateTime;
-
+	use InvalidArgumentException;
+	use TypeError;
+	
 	/**
 	* @backupGlobals disabled
 	* @backupStaticAttributes disabled
@@ -92,10 +94,8 @@
 			$this->assertEquals('2016-02-27 00:42:01', FancyDateTime::timestampToDate(mktime(0, 42, 1, 2, 27, 2016), 'Y-m-d H:i:s'));
 		}
 
-		/**
-		 * @expectedException TypeError
-		 */
 		public function testTimestampToDateError() {
+			$this->expectException(TypeError::class);
 			FancyDateTime::timestampToDate('Trololololololol', 'Y');
 		}
 
@@ -181,10 +181,8 @@
 			}
 		}
 
-		/**
-		 * @expectedException InvalidArgumentException
-		 */
 		public function testInvalidNormalizeBirthdate() {
+			$this->expectException(InvalidArgumentException::class);
 			FancyDateTime::normalizeBirthdate('dmy', '000000', 'object');
 		}
 

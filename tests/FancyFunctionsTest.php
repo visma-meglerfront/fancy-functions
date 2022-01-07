@@ -18,10 +18,10 @@
 		}
 
 		public function testMakeClickable() {
-			$original = 'This is http://adepto.as/';
+			$original = 'This is https://visma.com/';
 			$clickable = FancyFunctions::makeClickable($original);
 
-			$this->assertContains('<a target="_blank" href="http://adepto.as/">', $clickable);
+			$this->assertStringContainsString('<a target="_blank" href="https://visma.com/">', $clickable);
 		}
 
 		public function testIsCLI() {
