@@ -140,6 +140,10 @@
 		 * @return array|string       Returns a cleaned array or string
 		 */
 		public static function removeWhitespace($var) {
+			if ($var === null) {
+				return null;
+			}
+			
 			if (is_array($var)) {
 				return array_map(function($val) {
 					return self::removeWhitespace($val);
