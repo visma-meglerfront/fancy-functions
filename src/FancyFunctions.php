@@ -1,6 +1,12 @@
 <?php
 	namespace Adepto\Fancy;
 
+	use Exception;
+	use Imagick;
+	use ImagickException;
+	use ReflectionClass;
+	use ReflectionException;
+	
 	/**
 	 * FancyFunctions
 	 * Internal functions. Nothing to see here ;)
@@ -14,18 +20,18 @@
 		/**
 		 * Checks whether a class implements an interface or not.
 		 *
-		 * @param string $class     Class to check
-		 * @param string $interface Interface to check
+		 * @param class-string $class     Class to check
+		 * @param string       $interface Interface to check
 		 *
-		 * @return bool Implements?
-		 * @throws \ReflectionException
+		 * @return boolean Implements?
+		 * @throws ReflectionException
 		 */
 		public static function classImplements(string $class, string $interface): bool {
-			$ref = new \ReflectionClass($class);
+			$ref = new ReflectionClass($class);
 
 			try {
 				return $ref->implementsInterface($interface);
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				return false;
 			}
 		}
@@ -73,14 +79,14 @@
 		 * @param string $file File to Convert
 		 *
 		 * @return string
-		 * @throws \ImagickException
+		 * @throws ImagickException
 		 */
 		public static function imageToPNGData(string $file): string {
 			if (pathinfo($file, PATHINFO_EXTENSION) == 'svg') {
 				return 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($file));
 			}
 
-			$img = new \Imagick();
+			$img = new Imagick();
 
 			$img->readImageBlob(file_get_contents($file));
 			$img->setImageFormat("png24");
@@ -182,7 +188,7 @@
 		 *
 		 * @param mixed ...$vars
 		 *
-		 * @return boolean
+		 * @return bool
 		 */
 		public static function anyEmpty(...$vars): bool {
 			return FancyArray::any($vars, FancyClosure::fnEmpty());
@@ -193,7 +199,7 @@
 		 *
 		 * @param mixed ...$vars
 		 *
-		 * @return boolean
+		 * @return bool
 		 */
 		public static function allEmpty(...$vars): bool {
 			return FancyArray::all($vars, FancyClosure::fnEmpty());
@@ -234,8 +240,7 @@
 		 * Create string suitable as a css class.
 		 * 
 		 * @param string $str    String
-		 * @param string $prefix Prefix
-		 * 
+		 * @param string $prefix Prefix		 * 
 		 * @return string         String you can use as scc class
 		 */
 		public static function stringToCSSClass(string $str, string $prefix = ''): string {
@@ -294,7 +299,7 @@
 		 */
 		public static function assertType($object, string $class) {
 			if (!($object instanceof $class)) {
-				throw new \Exception('Expected class ' . $class . ', found ' . get_class($object));
+				throw new Exception('Expected class ' . $class . ', found ' . get_class($object));
 			}
 		}
 	}

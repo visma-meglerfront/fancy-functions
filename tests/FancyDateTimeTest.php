@@ -81,12 +81,12 @@
 			$dt = new \DateTime();
 			$extdt = new FancyDateTime();
 
-			$this->assertEquals($dt->diff(clone $dt)->d, $extdt->diff()->d);
+			$this->assertEquals($dt->diff(clone $dt)->d, $extdt->diff($extdt)->d);
 		}
 
-		public function testCreateFromFormat() {
-			$this->assertInstanceOf('Adepto\\Fancy\\FancyDateTime', FancyDateTime::createFromFormat('d.m.Y', '30.01.1996'));
-			$this->assertInstanceOf('Adepto\\Fancy\\FancyDateTime', FancyDateTime::createFromFormat([ 'd.m.Y', 'dmy' ], '30.01.1996'));
+		public function testCreateFromFormats() {
+			$this->assertInstanceOf('Adepto\\Fancy\\FancyDateTime', FancyDateTime::createFromFormats('d.m.Y', '30.01.1996'));
+			$this->assertInstanceOf('Adepto\\Fancy\\FancyDateTime', FancyDateTime::createFromFormats([ 'd.m.Y', 'dmy' ], '30.01.1996'));
 		}
 
 		public function testTimestampToDate() {

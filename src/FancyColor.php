@@ -48,9 +48,9 @@
 		 *
 		 * @param string $hex Hex Color value (# is removed automatically)
 		 *
-		 * @return int
+		 * @return float
 		 */
-		public static function getLuminance(string $hex): int {
+		public static function getLuminance(string $hex): float {
 			$hex = str_replace('#', '', $hex);
 
 			$r = hexdec(substr($hex, 0, 2));

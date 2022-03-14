@@ -1,14 +1,19 @@
-<?php /** @noinspection PhpComposerExtensionStubsInspection */
+<?php
 	namespace Adepto\Fancy;
 
+	use Exception;
 	use InvalidArgumentException;
+	use OutOfBoundsException;
+	use stdClass;
+	use TypeError;
+	use UnexpectedValueException;
 	use XMLWriter;
 	
 	/**
 	 * FancyArray
 	 *
 	 * @author bluefirex, FeistyBall
-	 * @version 1.0
+	 * @version 2.0
 	 * @package as.adepto.fancy
 	 */
 	abstract class FancyArray {
@@ -56,14 +61,14 @@
 
 			return $ret;
 		}
-		
+
 		/**
 		 * Flatten an array from a tree-like structure.
 		 * As opposed to {@see flatten} this DOES retain keys, however.
-		 * Nested keys are joined by {
+		 * Nested keys are joined by $glue in the flattened array
 		 *
-		 * @param  array  $arr  The array to flatten
-		 * @param  string $glue The glue to join nested keys. '_' by default.
+		 * @param  array  $arr             The array to flatten
+		 * @param  string $glue            The glue to join nested keys. '_' by default.
 		 *
 		 * @return  array  The flattened array with (optionally joined) nested keys
 		 */
@@ -84,14 +89,14 @@
 
 			return $flattened;
 		}
-		
+
 		/**
 		 * Flatten an array from a tree-like structure.
 		 * This copies values from the origin array into a list of sequential flat values
-		 * Nested keys are joined by {
+		 * Nested keys are joined by $glue in the flattened array
 		 *
-		 * @param  array  $arr  The array to flatten
-		 * @param  string $glue The glue to join nested keys. '_' by default.
+		 * @param  array  $arr             The array to flatten
+		 * @param  string $glue            The glue to join nested keys. '_' by default.
 		 *
 		 * @return  array  The flattened array with (optionally joined) nested key values
 		 */
@@ -144,10 +149,10 @@
 		 * any other function can modify it!
 		 *
 		 * @param  array  $arr Array to convert
-		 * @return \stdClass
+		 * @return stdClass
 		 */
-		public static function arrayToObject(array $arr): \stdClass {
-			$obj = new \stdClass();
+		public static function arrayToObject(array $arr): stdClass {
+			$obj = new stdClass();
 
 			foreach ($arr as $key => $val) {
 				if (is_array($val)) {
@@ -164,10 +169,11 @@
 		 * Convert an object to an array. This deep-copies everything
 		 * from the object to the array.
 		 *
-		 * @param  \stdClass  $obj Object to convert
+		 * @param stdClass  $obj Object to convert
+		 *
 		 * @return array
 		 */
-		public static function objectToArray(\stdClass $obj): array {
+		public static function objectToArray(stdClass $obj): array {
 			$arr = [];
 
 			foreach ($obj as $key => $val) {
@@ -241,8 +247,8 @@
 		/**
 		 * Find the highest (recursive) count in an array.
 		 *
-		 * @param array   $arr       Array to count
-		 * @param boolean $countSelf Whether to count the base arrays' size as well
+		 * @param array $arr       Array to count
+		 * @param bool  $countSelf Whether to count the base arrays' size as well
 		 *
 		 * @return int
 		 */
@@ -435,10 +441,10 @@
 		/**
 		 * Check that all elements of the array are of a certain class.
 		 *
-		 * @param  array  $array The array
-		 * @param  string $class The class
+		 * @param array  $array The array
+		 * @param string $class The class
 		 *
-		 * @throws \Exception
+		 * @throws Exception
 		 */
 		public static function assertType(array $array, string $class) {
 			foreach ($array as $object) {
@@ -583,9 +589,8 @@
 		/**
 		 * See Python
 		 *
-		 * @param  array ...$arr  The arrays to zip
-		 *
-		 * @return array          The zipped array
+		 * @param  array[]  ...$arr  The arrays to zip
+		 * @return array The zipped array
 		 */
 		public static function zip(array ...$arr): array {
 			return array_map([static::class, 'splat'], ...$arr);
@@ -644,8 +649,6 @@
 		/**
 		 * Convert an array to a CSV string
 		 * First array are the headings, subsequent arrays the contents
-		 *
-		 *
 		 *
 		 * @param  array  $arr       Array
 		 * @param  string $delimiter Delimiter to use, defaults to ';' for use with stupid Excel
@@ -870,7 +873,7 @@
 		 *
 		 * @return array
 		 */
-		public static function trim(array $arr) {
+		public static function trim(array $arr): array {
 			$rev = array_values(array_reverse($arr));
 			$length = count($arr);
 			
@@ -893,16 +896,14 @@
 		 * e.g.: your array is [ 'hello' => 'there' ] and your specification requires [ 'hello' => 'th*' ], it would match
 		 * Supports nesting of up to 255 arrays (PHP limitation).
 		 *
-		 * @param  array    $arr        Array to check
-		 * @param  array    $shouldHave Specification, see description
-		 * @param  bool     $throw      if true, exceptions are thrown
-		 *
-		 * @throws \OutOfBoundsException     if key could not be found and $throw is true
-		 * @throws \TypeError                if value types don't match and $throw is true
-		 * @throws \UnexpectedValueException if value has same type but is still not the same and $throw is true
-		 * @throws \Exception                Never actually thrown by itself, just listed here to make the IDE shut up
+		 * @param array $arr        Array to check
+		 * @param array $shouldHave Specification, see description
+		 * @param bool  $throw      if true, exceptions are thrown
 		 *
 		 * @return bool
+		 * @throws TypeError                if value types don't match and $throw is true
+		 * @throws UnexpectedValueException if value has same type but is still not the same and $throw is true
+		 * @throws OutOfBoundsException     if key could not be found and $throw is true
 		 */
 		public static function matches(array $arr, array $shouldHave, bool $throw = true): bool {
 			$matches = true;
@@ -910,16 +911,16 @@
 			try {
 				foreach ($shouldHave as $key => $value) {
 					if (!array_key_exists($key, $arr)) {
-						throw new \OutOfBoundsException('Key missing: ' . $key);
+						throw new OutOfBoundsException('Key missing: ' . $key);
 					} else if (is_array($value) && is_array($arr[$key])) { # technically "else if" is not necessary, but we want to be consistent here
 						$matches &= self::matches($arr[$key], $value, $throw);
 					} else if (is_array($value) || is_array($arr[$key])) {
-						throw new \TypeError('Type mismatch at key "' . $key . '"');
+						throw new TypeError('Type mismatch at key "' . $key . '"');
 					} else if (!fnmatch($value, $arr[$key])) {
-						throw new \UnexpectedValueException('Value mismatch at key "' . $key . '"');
+						throw new UnexpectedValueException('Value mismatch at key "' . $key . '"');
 					}
 				}
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				if ($throw) {
 					throw $e;
 				}
