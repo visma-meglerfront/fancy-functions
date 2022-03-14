@@ -5,23 +5,18 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "FeistyBall",
-            "email": "cg@adepto.as"
-        },
-    
-        {
-            "name": "bluefirex",
+            "name": "Benjamin Schmidt",
             "email": "benjamin.schmidt@visma.com"
         }
     ],
     "minimum-stability": "stable",
     "require": {
-        "danielstjules/stringy": "^2.4",
         "php": ">=7.4",
         "ext-mbstring": "*",
-		"ext-imagick": "*",
-        "ext-iconv": "*"
-    },
+		"ext-json": "*",
+        "ext-imagick": "*",
+		"ext-iconv": "*"
+	},
     "autoload": {
         "psr-4": {
             "Adepto\\Fancy\\": "src"

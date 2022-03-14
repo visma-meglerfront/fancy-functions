@@ -1,8 +1,6 @@
 <?php
 	namespace Adepto\Fancy;
 
-	use function Stringy\create as s;
-
 	/**
 	 * FancyString
 	 * Commonly used functions for working with strings, backed by Stringy.
@@ -12,9 +10,17 @@
 	 * @package as.adepto.fancy
 	 */
 	abstract class FancyString {
+		
+		private static function delimit(string $str, string $delimiter): string {
+	        $str = mb_ereg_replace('\B([A-Z])', '-\1', trim($str));
+	        $str = mb_strtolower($str);
+	        $str = mb_ereg_replace('[-_\s]+', $delimiter, $str);
+	
+			return $str;
+		}
 
 		/**
-		 * Convert a string to kebap-case, i.e.:
+		 * Convert a string to kebab-case, i.e.:
 		 *     some_string -> some-string
 		 *     someString -> some-string
 		 *
@@ -23,7 +29,7 @@
 		 * @return string
 		 */
 		public static function toKebapCase(string $str): string {
-			return (string) s($str)->dasherize();
+			return self::delimit($str, '-');
 		}
 
 		/**
@@ -36,7 +42,7 @@
 		 * @return string
 		 */
 		public static function toSnakeCase(string $str): string {
-			return (string) s($str)->underscored();
+			return self::delimit($str, '_');
 		}
 
 		/**
@@ -49,7 +55,30 @@
 		 * @return string
 		 */
 		public static function toCamelCase(string $str): string {
-			return (string) s($str)->camelize();
+			$str = lcfirst(trim($str));
+			$str = preg_replace('/^[-_]+/', '', $str);
+			
+			$str = preg_replace_callback(
+				'/[-_\s]+(.)?/u',
+				function ($match) {
+					if (isset($match[1])) {
+						return mb_strtoupper($match[1]);
+					}
+					
+					return '';
+				},
+				$str
+			);
+			
+			$str = preg_replace_callback(
+				'/[\d]+(.)?/u',
+				function ($match) {
+					return mb_strtoupper($match[0]);
+				},
+				$str
+			);
+			
+			return $str;
 		}
 
 		/**
@@ -61,7 +90,7 @@
 		 * @return string
 		 */
 		public static function toLowerCase(string $str): string {
-			return (string) s($str)->toLowercase();
+			return mb_strtolower($str);
 		}
 
 		/**
@@ -73,19 +102,19 @@
 		 * @return string
 		 */
 		public static function toUpperCase(string $str): string {
-			return (string) s($str)->toUppercase()->replace('ß', 'SS');
+			return str_replace('ß', 'SS', mb_strtoupper($str));
 		}
-
+		
 		/**
 		 * Add an ellipsis (…) to the center of the string if it is too long.
 		 *
-		 * @param string     $str    String to shorten
-		 * @param int        $maxLen Maximum Length ($char included)
-		 * @param int|string $char   Char to use (default: …)
+		 * @param string $str    String to shorten
+		 * @param int    $maxLen Maximum Length ($char included)
+		 * @param string $char   Char to use (default: …)
 		 *
 		 * @return string         String with ellipsis in the center
 		 */
-		public static function ellipsisCenter(string $str, int $maxLen, $char = '…'): string {
+		public static function ellipsisCenter(string $str, int $maxLen, string $char = '…'): string {
 			if (mb_strlen($str) > ($maxLen + mb_strlen($char))) {
 				$characters = floor($maxLen / 2);
 				
@@ -94,29 +123,29 @@
 
 			return $str;
 		}
-
+		
 		/**
 		 * Add an ellipsis (…) to the end of the string if it is too long.
 		 *
-		 * @param string     $str    String to shorten
-		 * @param int        $maxLen Maximum Length ($char included)
-		 * @param int|string $char   Char to use (default: …)
+		 * @param string $str    String to shorten
+		 * @param int    $maxLen Maximum Length ($char included)
+		 * @param string $char   Char to use (default: …)
 		 *
 		 * @return string         String with ellipsis at the end
 		 */
-		public static function ellipsisEnd(string $str, int $maxLen, $char = '…'): string {
+		public static function ellipsisEnd(string $str, int $maxLen, string $char = '…'): string {
 			if (mb_strlen($str) > ($maxLen + mb_strlen($char))) {
 				return mb_substr($str, 0, $maxLen) . $char;
 			}
 
 			return $str;
 		}
-
+		
 		/**
 		 * Generate a random string based on a character set.
 		 *
-		 * @param integer $length  Length of the random string
-		 * @param string  $charset Chars to be used for the random string
+		 * @param int    $length  Length of the random string
+		 * @param string $charset Chars to be used for the random string
 		 *
 		 * @return string           Random String
 		 */
@@ -129,15 +158,15 @@
 
 			return $str;
 		}
-
+		
 		/**
 		 * Remove whitespace from $var.
 		 * This is useful for comparing values which can contain
 		 * whitespaces.
 		 *
-		 * @param  array|string $var  Variable, either an array or a string
+		 * @param string|array|null $var Variable, either an array or a string
 		 *
-		 * @return array|string       Returns a cleaned array or string
+		 * @return string|array|null       Returns a cleaned array or string
 		 */
 		public static function removeWhitespace($var) {
 			if ($var === null) {
